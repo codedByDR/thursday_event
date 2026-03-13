@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Functional Requirements Document (FRD)</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 32px; line-height: 1.5; color: #111; }
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    h2 { font-size: 20px; margin-top: 24px; }
+    h3 { font-size: 16px; margin-top: 18px; }
+    p { margin: 8px 0; }
+    ul { margin: 8px 0 8px 20px; }
+    pre { background:#f6f8fa; padding:10px; border-radius:4px; overflow:auto }
+    .meta { margin-bottom: 16px; }
+    .actions { margin-bottom: 16px; }
+    .actions button, .actions a { background:#0366d6; color:#fff; border:none; padding:8px 12px; border-radius:4px; text-decoration:none; margin-right:8px; cursor:pointer; }
+    .actions button.secondary { background:#6a737d; }
+    hr { margin: 24px 0; }
+  </style>
+</head>
+<body>
+<h1>Functional Requirements Document (FRD)</h1>
+<p><strong>Version:</strong> 0.1</p>
+<p><strong>Author:</strong> FRD Generator</p>
+<p><strong>Date:</strong> 13 Mar 2026</p>
+<p><strong>Status:</strong> Draft</p>
+<div class="actions">
+  <button id="printBtn">Print</button>
+  <a id="downloadHtml" href="#">Download HTML</a>
+  <a id="downloadPdf" href="FRD.pdf" download="">Download PDF</a>
+</div>
+<h2>2. Executive summary</h2>
+<p>This document defines the requirements for an <strong>AI-assisted flexible work and life balance request system</strong> that enables employees to request arrangements such as work from home, shift changes, and caregiving support. The system helps employees create clear, policy-aligned requests, routes them for approval, tracks status, and monitors outcomes over time to promote fairness and consistent decision-making across the organization.</p>
+<h2>3. Goals and success metrics</h2>
+<p><strong>Goals</strong></p>
+<ul>
+<li>Enable employees to submit flexible work requests quickly and clearly.</li>
+<li>Improve request quality via AI guidance and professionally formatted justifications.</li>
+<li>Ensure routing, approvals, and escalations follow defined policy and hierarchy rules.</li>
+<li>Increase consistency and fairness across teams through standardized criteria, monitoring, and reporting.</li>
+<li>Create an auditable, compliant record of requests, decisions, and outcomes.</li>
+</ul>
+<p><strong>Success metrics</strong></p>
+<ul>
+<li>Median time to submit a complete request (minutes).</li>
+<li>Approval cycle time by request type (hours or days).</li>
+<li>Percentage of requests requiring rework due to missing information.</li>
+<li>Employee satisfaction score for the request experience.</li>
+<li>Consistency indicators (variance in approval rates across teams after controlling for role and location).</li>
+<li>Percentage of decisions with complete policy tags and audit logs.</li>
+</ul>
+<h2>4. Scope</h2>
+<p><strong>In scope</strong></p>
+<ul>
+<li>Guided request intake for flexible work arrangements.</li>
+<li>AI assistance for structuring requests and generating justifications.</li>
+<li>Automatic routing to approvers based on hierarchy and request type.</li>
+<li>Policy tagging (policy identifiers and decision criteria references).</li>
+<li>Status tracking, reminders, and escalation.</li>
+<li>Outcome monitoring, feedback loops, and re-evaluation for ongoing arrangements.</li>
+<li>Reporting dashboards for fairness and operational performance.</li>
+</ul>
+<p><strong>Out of scope</strong></p>
+<ul>
+<li>Payroll changes and benefits enrollment workflows (unless explicitly integrated later).</li>
+<li>Full case management for employee relations disputes beyond an appeal step.</li>
+<li>Scheduling and workforce management execution (the system records decisions; execution may be external).</li>
+</ul>
+<p><strong>Assumptions</strong></p>
+<ul>
+<li>Organization has defined flexible work policies (or will define them) with identifiers.</li>
+<li>There is a reliable source of org hierarchy (HRIS or directory).</li>
+<li>Users authenticate via SSO or another identity mechanism.</li>
+</ul>
+<p><strong>Constraints</strong></p>
+<ul>
+<li>Must support privacy and sensitive personal context.</li>
+<li>Must avoid biased AI outputs and protect sensitive attributes.</li>
+<li>Must retain auditability for compliance and internal review.</li>
+</ul>
+<h2>5. Personas and roles</h2>
+<p><strong>Employee (Requester)</strong></p>
+<ul>
+<li><strong>Description:</strong> Employee submitting a flexible work or caregiving support request.</li>
+<li><strong>Goals:</strong> Submit a clear request, understand status, receive a timely decision, and track outcomes.</li>
+<li><strong>Key permissions:</strong> Create and edit own requests (until submitted), view status, view decision rationale, provide feedback, request reconsideration within allowed rules.</li>
+</ul>
+<p><strong>Manager (Approver)</strong></p>
+<ul>
+<li><strong>Description:</strong> Direct manager or delegated manager approving requests.</li>
+<li><strong>Goals:</strong> Make consistent decisions, understand policy guidance, assess impact on team operations.</li>
+<li><strong>Key permissions:</strong> View requests for direct reports, approve/deny, request more info, add conditions, view policy references, view history and prior similar decisions (where allowed).</li>
+</ul>
+<p><strong>HR Business Partner / HR Reviewer (Approver or Co-approver)</strong></p>
+<ul>
+<li><strong>Description:</strong> Ensures policy compliance and fairness.</li>
+<li><strong>Goals:</strong> Ensure decisions align with policy, reduce risk, maintain consistency across teams.</li>
+<li><strong>Key permissions:</strong> Review requests, co-approve, override or escalate (as allowed), view fairness dashboards, access audit logs.</li>
+</ul>
+<p><strong>Compliance / Legal / Security Reviewer (Conditional approver)</strong></p>
+<ul>
+<li><strong>Description:</strong> Reviews requests that trigger special conditions (country rules, data access, security).</li>
+<li><strong>Goals:</strong> Ensure compliance with legal/security constraints.</li>
+<li><strong>Key permissions:</strong> Review only flagged requests, comment, approve/deny within scope, add required controls.</li>
+</ul>
+<p><strong>HR Operations Admin (Admin)</strong></p>
+<ul>
+<li><strong>Description:</strong> Configures policies, workflows, categories, and reporting.</li>
+<li><strong>Goals:</strong> Keep the system accurate, maintain templates and routing, manage retention settings.</li>
+<li><strong>Key permissions:</strong> Manage policy library, configure routing rules, manage categories, manage SLA rules, manage integrations, manage reporting configurations.</li>
+</ul>
+<h2>6. User journeys / key workflows</h2>
+<h3>Workflow A: Submit a flexible work request (guided intake)</h3>
+<ul>
+<li><strong>Trigger:</strong> Employee selects “New request”.</li>
+<li><strong>Preconditions:</strong> Employee authenticated; role and manager known.</li>
+<li><strong>Main flow</strong><ol>
+<li>Employee selects request type (or “not sure”).</li>
+<li>System prompts for arrangement details (duration, dates, schedule, location, urgency).</li>
+<li>Employee enters free-text context.</li>
+<li>AI suggests missing fields and clarifying questions.</li>
+<li>AI drafts a structured request summary and justification.</li>
+<li>Employee reviews, edits, and confirms.</li>
+<li>System validates required fields and policy constraints.</li>
+<li>Employee submits.</li>
+</ol>
+</li>
+<li><strong>Alternate flows</strong><ul>
+<li>Employee saves as draft and returns later.</li>
+<li>Employee chooses “No AI help” and submits manually (still validated).</li>
+</ul>
+</li>
+<li><strong>Postconditions:</strong> Request created, assigned a tracking ID, routed for approvals.</li>
+</ul>
+<h3>Workflow B: Approval and routing</h3>
+<ul>
+<li><strong>Trigger:</strong> Request submitted.</li>
+<li><strong>Preconditions:</strong> Routing rules configured; approver availability known.</li>
+<li><strong>Main flow</strong><ol>
+<li>System determines route: manager only, HR only, or manager + HR (and conditional reviewers).</li>
+<li>Approvers are notified.</li>
+<li>Approver reviews request, policy tags, and AI-generated summary.</li>
+<li>Approver approves, denies, or requests more information.</li>
+<li>System updates status and notifies employee.</li>
+</ol>
+</li>
+<li><strong>Alternate flows</strong><ul>
+<li>Missing approver: route to delegate or HR ops queue.</li>
+<li>SLA breach: auto-escalate to next-level manager or HR reviewer.</li>
+</ul>
+</li>
+<li><strong>Postconditions:</strong> Decision recorded, audit log updated, outcome monitoring plan started if approved.</li>
+</ul>
+<h3>Workflow C: Request changes, withdrawal, and reconsideration</h3>
+<ul>
+<li><strong>Trigger:</strong> Employee edits before decision, withdraws, or appeals after denial.</li>
+<li><strong>Preconditions:</strong> Rules allow edits or appeal within time window.</li>
+<li><strong>Main flow</strong><ol>
+<li>Employee requests reconsideration with additional information.</li>
+<li>System routes appeal per policy.</li>
+<li>Decision updated with rationale and audit record.</li>
+</ol>
+</li>
+<li><strong>Postconditions:</strong> Final decision stored; reporting updated.</li>
+</ul>
+<h3>Workflow D: Outcome monitoring and feedback</h3>
+<ul>
+<li><strong>Trigger:</strong> Request approved (or denied) and monitoring schedule begins.</li>
+<li><strong>Preconditions:</strong> Monitoring cadence configured.</li>
+<li><strong>Main flow</strong><ol>
+<li>System schedules check-ins (for example, 30/60/90 days).</li>
+<li>Employee and manager provide feedback on effectiveness.</li>
+<li>AI summarizes feedback trends and flags risks (burnout, productivity concerns) without making sensitive inferences.</li>
+<li>System recommends re-evaluation or adjustments.</li>
+</ol>
+</li>
+<li><strong>Postconditions:</strong> Outcome records saved and available for analytics.</li>
+</ul>
+<h2>7. Functional requirements</h2>
+<h3>Module: Request intake</h3>
+<ul>
+<li><strong>FR-1</strong>: Create request drafts<ul>
+<li><strong>Description:</strong> Employees can create, save, and edit flexible work requests as drafts.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given an authenticated employee, when they start a request, then a draft is created with status “Draft”.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Request type, dates, schedule needs, urgency, free text, attachments metadata (if allowed).</li>
+<li><strong>Errors/validations:</strong> Required fields enforced on submit.</li>
+</ul>
+</li>
+<li><strong>FR-2</strong>: Guided data collection<ul>
+<li><strong>Description:</strong> System guides employees through required and optional fields based on request type and region.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given a selected request type, when the employee proceeds, then the form shows type-specific required fields.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Type-specific details.</li>
+<li><strong>Errors/validations:</strong> Missing required fields block submission.</li>
+</ul>
+</li>
+</ul>
+<h3>Module: AI assistance (guidance + justification)</h3>
+<ul>
+<li><strong>FR-3</strong>: AI clarification prompts<ul>
+<li><strong>Description:</strong> AI suggests clarifying questions to improve completeness and professionalism.</li>
+<li><strong>Priority:</strong> Should</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given incomplete free text, when AI assist is enabled, then the system suggests specific missing details (dates, duration, constraints).</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Prompt responses, AI suggestion log.</li>
+<li><strong>Errors/validations:</strong> AI suggestions must not force disclosure of sensitive attributes.</li>
+</ul>
+</li>
+<li><strong>FR-4</strong>: AI-generated justification formatting<ul>
+<li><strong>Description:</strong> AI converts informal reasoning into a structured justification aligned to company norms.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given employee free text, when “Generate justification” is clicked, then the output includes summary, requested arrangement, business impact mitigation, and timing.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Original text, generated text, edit history.</li>
+<li><strong>Errors/validations:</strong> Toxic or policy-violating content flagged and must be corrected before submission.</li>
+</ul>
+</li>
+<li><strong>FR-5</strong>: Policy-aware suggestions (with placeholders if unknown)<ul>
+<li><strong>Description:</strong> AI suggests applicable request categories and policy references using internal policy identifiers.</li>
+<li><strong>Priority:</strong> Should</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given request details, when AI analyzes, then it suggests policy tags like <code>POLICY-FLEX-###</code> (placeholder if unknown).</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Suggested policy tags, confidence, user acceptance of tags.</li>
+<li><strong>Errors/validations:</strong> If policies are not configured, system uses placeholders and flags admin setup need.</li>
+</ul>
+</li>
+</ul>
+<h3>Module: Approval workflow and routing</h3>
+<ul>
+<li><strong>FR-6</strong>: Configurable routing rules<ul>
+<li><strong>Description:</strong> System routes requests based on hierarchy, request type, region, and thresholds (duration, frequency).</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given a submitted request, when routing runs, then the correct approver chain is assigned according to configured rules.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Routing rule used, assigned approvers, timestamps.</li>
+<li><strong>Errors/validations:</strong> If routing cannot be determined, send to a fallback queue.</li>
+</ul>
+</li>
+<li><strong>FR-7</strong>: Approver actions and rationale<ul>
+<li><strong>Description:</strong> Approvers can approve, deny, request more info, or approve with conditions, with required rationale fields.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given an approver, when denying, then rationale is required and stored.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Decision, rationale, conditions, timestamps.</li>
+<li><strong>Errors/validations:</strong> Decisions require required fields; invalid status transitions blocked.</li>
+</ul>
+</li>
+<li><strong>FR-8</strong>: SLA tracking and escalation<ul>
+<li><strong>Description:</strong> System tracks approval SLAs and escalates automatically.</li>
+<li><strong>Priority:</strong> Should</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given an approval step is overdue, when SLA threshold is exceeded, then an escalation notification is sent and escalation logged.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> SLA targets, escalations, reminders.</li>
+<li><strong>Errors/validations:</strong> Prevent escalation loops.</li>
+</ul>
+</li>
+</ul>
+<h3>Module: Policy tagging and compliance</h3>
+<ul>
+<li><strong>FR-9</strong>: Mandatory policy tags on decision<ul>
+<li><strong>Description:</strong> Each final decision must include one or more policy tags and decision criteria references.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given a request is being decided, when final decision is submitted, then at least one policy tag is present.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Policy IDs (e.g., <code>POLICY-FLEX-001</code>), criteria codes.</li>
+<li><strong>Errors/validations:</strong> Missing tags block finalization (unless admin override enabled with justification).</li>
+</ul>
+</li>
+<li><strong>FR-10</strong>: Compliance flags and conditional review<ul>
+<li><strong>Description:</strong> Requests triggering compliance conditions (country restrictions, security constraints) require additional review steps.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given a request meets a conditional rule, when routed, then an additional reviewer step is inserted.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Triggered condition, reviewer notes.</li>
+<li><strong>Errors/validations:</strong> Conditional step cannot be skipped.</li>
+</ul>
+</li>
+</ul>
+<h3>Module: Notifications and reminders</h3>
+<ul>
+<li><strong>FR-11</strong>: Status notifications<ul>
+<li><strong>Description:</strong> System notifies employees and approvers on submission, decision, info requests, escalations, and monitoring check-ins.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given a status change, when it occurs, then notifications are sent via configured channels.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Notification events, delivery status.</li>
+<li><strong>Errors/validations:</strong> Respect user notification preferences and quiet hours.</li>
+</ul>
+</li>
+</ul>
+<h3>Module: Outcome monitoring and feedback</h3>
+<ul>
+<li><strong>FR-12</strong>: Monitoring plan creation<ul>
+<li><strong>Description:</strong> Approved requests automatically create an outcome monitoring plan with configurable cadence.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given an approved request, when the decision is finalized, then monitoring tasks are scheduled.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Check-in schedule, feedback prompts.</li>
+<li><strong>Errors/validations:</strong> Monitoring must pause if employment status changes.</li>
+</ul>
+</li>
+<li><strong>FR-13</strong>: Feedback capture and AI summarization<ul>
+<li><strong>Description:</strong> Collect feedback from employees and managers; AI summarizes themes and flags potential issues for review.</li>
+<li><strong>Priority:</strong> Should</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given completed feedback, when AI summarizes, then it produces a neutral summary and avoids inferring protected attributes.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Feedback responses, summaries, flags.</li>
+<li><strong>Errors/validations:</strong> Allow users to opt out of AI summarization where required.</li>
+</ul>
+</li>
+</ul>
+<h3>Module: Reporting dashboard</h3>
+<ul>
+<li><strong>FR-14</strong>: Operational dashboards<ul>
+<li><strong>Description:</strong> Provide dashboards for volume, cycle time, SLA compliance, and outcomes by request type.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given a time range, when a dashboard is viewed, then metrics match underlying request data.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Aggregations and filters.</li>
+<li><strong>Errors/validations:</strong> Access control enforced for dashboard viewers.</li>
+</ul>
+</li>
+<li><strong>FR-15</strong>: Fairness and consistency monitoring<ul>
+<li><strong>Description:</strong> Provide fairness monitoring views to detect inconsistent decision patterns across teams while handling protected attributes appropriately.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given appropriate permissions, when HR leadership views fairness metrics, then data is aggregated and de-identified where required.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Aggregated metrics, anomaly flags.</li>
+<li><strong>Errors/validations:</strong> Prevent exposing protected attributes at an individual level unless explicitly permitted by policy and law.</li>
+</ul>
+</li>
+</ul>
+<h3>Module: Administration and configuration</h3>
+<ul>
+<li><strong>FR-16</strong>: Policy library management<ul>
+<li><strong>Description:</strong> Admins can manage policies with identifiers, applicability rules, and text guidance.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given an admin, when they update a policy, then new requests use updated guidance while existing requests retain a versioned reference.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Policy versions, effective dates.</li>
+<li><strong>Errors/validations:</strong> Prevent deleting policies referenced by requests; allow deprecation.</li>
+</ul>
+</li>
+<li><strong>FR-17</strong>: Audit log configuration and export<ul>
+<li><strong>Description:</strong> Admins can configure retention and export for audit.</li>
+<li><strong>Priority:</strong> Must</li>
+<li><strong>Acceptance criteria:</strong><ul>
+<li>Given an admin, when an export is generated, then it includes immutable event history for selected requests.</li>
+</ul>
+</li>
+<li><strong>Data captured:</strong> Export metadata.</li>
+<li><strong>Errors/validations:</strong> Export access restricted and logged.</li>
+</ul>
+</li>
+</ul>
+<h2>8. Data model (logical)</h2>
+<p><strong>Entity: Request</strong></p>
+<ul>
+<li>Fields: request_id, requester_id, request_type, status, created_at, submitted_at, region, urgency, start_date, end_date, schedule_details, free_text_reason, structured_summary, ai_generated_justification, final_justification, attachments_metadata</li>
+<li>Relationships: has many ApprovalSteps, has many PolicyTags, has many Feedback entries, has many AuditLog events</li>
+</ul>
+<p><strong>Entity: RequestType</strong></p>
+<ul>
+<li>Fields: type_id, name (WFH, shift change, caregiving support), required_fields_config, default_routing_rule_id</li>
+</ul>
+<p><strong>Entity: PolicyReference</strong></p>
+<ul>
+<li>Fields: policy_id (e.g., <code>POLICY-FLEX-###</code>), title, description, region_applicability, effective_date, version, criteria_codes</li>
+</ul>
+<p><strong>Entity: PolicyTag (join)</strong></p>
+<ul>
+<li>Fields: request_id, policy_id, criteria_code, tag_source (AI/user/admin), confidence, created_at</li>
+</ul>
+<p><strong>Entity: ApprovalStep</strong></p>
+<ul>
+<li>Fields: step_id, request_id, step_order, approver_role, approver_user_id, status, decision, rationale, conditions, due_at, decided_at</li>
+<li>Relationships: belongs to Request</li>
+</ul>
+<p><strong>Entity: DecisionOutcome</strong></p>
+<ul>
+<li>Fields: request_id, final_decision (approved/denied/withdrawn), decision_date, decision_owner_id, decision_summary</li>
+</ul>
+<p><strong>Entity: Feedback</strong></p>
+<ul>
+<li>Fields: feedback_id, request_id, submitted_by_role, submitted_by_user_id, submitted_at, effectiveness_rating, comments, issues_flagged, ai_summary</li>
+</ul>
+<p><strong>Entity: AuditLog</strong></p>
+<ul>
+<li>Fields: audit_id, request_id, actor_user_id, actor_role, event_type, event_payload, created_at, ip_address (if applicable), source_system</li>
+</ul>
+<h2>9. Non-functional requirements</h2>
+<ul>
+<li><strong>Security and privacy:</strong> Encrypt data in transit and at rest; minimize sensitive fields; support redaction workflows where required.</li>
+<li><strong>RBAC:</strong> Role-based access by requester/manager/HR/compliance/admin; least privilege defaults.</li>
+<li><strong>Auditability:</strong> Immutable audit log for all request lifecycle events and AI actions (generation, edits, suggestions accepted).</li>
+<li><strong>Availability and performance:</strong> Define uptime target; typical page loads under agreed threshold; handle peak submission periods.</li>
+<li><strong>Accessibility:</strong> WCAG-aligned UI; keyboard navigation; screen reader support.</li>
+<li><strong>Localization/timezone handling:</strong> Store timestamps in UTC, display in user timezone; support local policy differences.</li>
+<li><strong>Data retention:</strong> Configurable retention per region and policy; support legal holds.</li>
+<li><strong>AI governance:</strong> Model output monitoring, prompt logging, bias testing, safe completion rules, and human override.</li>
+</ul>
+<h2>10. Reporting &amp; analytics</h2>
+<p><strong>Standard dashboards</strong></p>
+<ul>
+<li>Requests volume by type, region, department.</li>
+<li>Cycle time and SLA compliance by approver group.</li>
+<li>Decision outcomes by type and time.</li>
+<li>Outcome effectiveness trends (ratings, reversion rate, follow-up issues).</li>
+<li>Reconsideration rate and reasons.</li>
+</ul>
+<p><strong>Metric definitions</strong></p>
+<ul>
+<li>Approval rate: approvals / submitted requests.</li>
+<li>SLA compliance: percent of approval steps decided within SLA.</li>
+<li>Rework rate: percent of submissions returned for more info.</li>
+<li>Consistency index: variance of approval rates across teams normalized for request type and role level.</li>
+</ul>
+<p><strong>Filters and breakdowns</strong></p>
+<ul>
+<li>Department, team, manager, job level, location, region, request type, urgency, duration, policy tag.</li>
+<li>Protected attributes: only in aggregated form and only when permitted.</li>
+</ul>
+<p><strong>Fairness monitoring considerations</strong></p>
+<ul>
+<li>Avoid individual-level exposure of sensitive data.</li>
+<li>Use statistical thresholds for flagging anomalies.</li>
+<li>Provide drill-down only to authorized roles and only when compliant.</li>
+</ul>
+<h2>11. Edge cases &amp; exception handling</h2>
+<ul>
+<li>Missing or inactive approver: auto-delegate or route to HR ops queue.</li>
+<li>Conflicting requests: detect overlap with existing flexible arrangements; prompt for clarification.</li>
+<li>Policy mismatch: request violates policy constraints; require exception workflow.</li>
+<li>Withdrawal after submission: allow withdrawal with reason; log and notify approvers.</li>
+<li>Appeal/reconsideration: enforce time window and required new information.</li>
+<li>Long-running arrangements: require scheduled re-approval or check-in cadence.</li>
+<li>Employee transfer or manager change mid-process: re-evaluate routing and notify stakeholders.</li>
+<li>AI hallucinated policy references: system must only suggest from verified policy library or clearly mark placeholders.</li>
+</ul>
+<hr>
+<p><em>End of FRD (version 0.1)</em></p>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var printBtn = document.getElementById('printBtn');
+    if (printBtn) printBtn.addEventListener('click', function () { window.print(); });
+
+    var dlHtml = document.getElementById('downloadHtml');
+    if (dlHtml) dlHtml.addEventListener('click', function (e) {
+      e.preventDefault();
+      var content = '<!doctype html>\n' + document.documentElement.outerHTML;
+      var blob = new Blob([content], { type: 'text/html' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'FRD.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  });
+</script>
+
+</body></html>

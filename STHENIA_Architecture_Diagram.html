@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STHENIA — Architecture Diagram</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 32px 24px 60px;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────── */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      background: linear-gradient(135deg, #818cf8 0%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 6px;
+      font-size: .85rem;
+      color: #94a3b8;
+    }
+
+    /* ── Layout wrapper ─────────────────────────────────────────── */
+    .diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ── Generic layer card ─────────────────────────────────────── */
+    .layer {
+      border-radius: 12px;
+      padding: 18px 20px 20px;
+      position: relative;
+    }
+    .layer-title {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      opacity: .75;
+    }
+    .boxes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    /* ── Arrow connector ─────────────────────────────────────────── */
+    .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 38px;
+      gap: 6px;
+      color: #64748b;
+      font-size: .72rem;
+      letter-spacing: .06em;
+    }
+    .arrow svg { flex-shrink: 0; }
+
+    /* ── Box types ───────────────────────────────────────────────── */
+    .box {
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: .8rem;
+      line-height: 1.4;
+      font-weight: 500;
+      border: 1px solid transparent;
+      min-width: 120px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .box strong { display: block; font-size: .85rem; margin-bottom: 2px; }
+    .box span   { font-size: .72rem; opacity: .75; }
+
+    /* ── Layer colour themes ─────────────────────────────────────── */
+    /* Frontend */
+    .layer-fe   { background: #1e1b4b; border: 1px solid #4338ca; }
+    .layer-fe .layer-title { color: #a5b4fc; }
+    .box-fe     { background: #312e81; border-color: #6366f1; color: #c7d2fe; }
+
+    /* API Gateway */
+    .layer-api  { background: #1e3a5f; border: 1px solid #0284c7; }
+    .layer-api .layer-title { color: #7dd3fc; }
+    .box-api    { background: #0c4a6e; border-color: #0ea5e9; color: #bae6fd; }
+
+    /* Routes */
+    .layer-routes { background: #0f2d3b; border: 1px solid #0891b2; }
+    .layer-routes .layer-title { color: #67e8f9; }
+    .box-routes { background: #083344; border-color: #06b6d4; color: #a5f3fc; }
+
+    /* Services */
+    .layer-svc  { background: #0f2d1e; border: 1px solid #059669; }
+    .layer-svc .layer-title { color: #6ee7b7; }
+    .box-svc    { background: #064e3b; border-color: #10b981; color: #a7f3d0; }
+
+    /* AI */
+    .layer-ai   { background: #2d1b3e; border: 1px solid #9333ea; }
+    .layer-ai .layer-title { color: #d8b4fe; }
+    .box-ai     { background: #3b0764; border-color: #a855f7; color: #e9d5ff; }
+
+    /* Data */
+    .layer-data { background: #292524; border: 1px solid #d97706; }
+    .layer-data .layer-title { color: #fcd34d; }
+    .box-sqlite { background: #451a03; border-color: #f59e0b; color: #fed7aa; }
+    .box-chroma { background: #581c87; border-color: #c084fc; color: #e9d5ff; }
+    .box-redis  { background: #1c1917; border-color: #ef4444; color: #fecaca; }
+
+    /* Security */
+    .layer-sec  { background: #1c1a27; border: 1px solid #e11d48; }
+    .layer-sec .layer-title { color: #fda4af; }
+    .box-sec    { background: #4c0519; border-color: #f43f5e; color: #fecdd3; }
+
+    /* Monitoring */
+    .layer-mon  { background: #1a1c1e; border: 1px solid #6b7280; }
+    .layer-mon .layer-title { color: #d1d5db; }
+    .box-mon    { background: #111827; border-color: #9ca3af; color: #e5e7eb; }
+
+    /* ── Three-column split for lower layers ─────────────────────── */
+    .split3 {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    /* ── Two-column split ─────────────────────────────────────────── */
+    .split2 {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    /* ── AI agents grid ──────────────────────────────────────────── */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .box-ai.agent {
+      min-width: unset;
+      text-align: center;
+      padding: 8px 10px;
+    }
+    .box-ai.agent strong { font-size: .75rem; }
+
+    /* ── Legend ──────────────────────────────────────────────────── */
+    .legend {
+      max-width: 1100px;
+      margin: 28px auto 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .75rem;
+      color: #94a3b8;
+    }
+    .legend-dot {
+      width: 12px; height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: .72rem;
+      color: #475569;
+    }
+    /* ── Download toolbar ────────────────────────────────────── */
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .btn-dl {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity .15s, transform .1s;
+      text-decoration: none;
+    }
+    .btn-dl:hover  { opacity: .85; transform: translateY(-1px); }
+    .btn-dl:active { transform: translateY(0); }
+    .btn-html {
+      background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+      color: #fff;
+    }
+    .btn-print {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+    }
+    @media print {
+      .toolbar { display: none; }
+      body { background: #fff; color: #000; padding: 10px; }
+    }  </style>
+</head>
+<body>
+
+<header>
+  <h1>STHENIA — System Architecture</h1>
+  <p>Document Version 1.0 &nbsp;·&nbsp; March 13, 2026</p>
+</header>
+
+<!-- ── DOWNLOAD TOOLBAR ────────────────────────────────── -->
+<div class="toolbar">
+  <button class="btn-dl btn-html" onclick="downloadHTML()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+    Download HTML
+  </button>
+  <button class="btn-dl btn-print" onclick="window.print()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+    Print / Save as PDF
+  </button>
+</div>
+
+<div class="diagram">
+
+  <!-- ── FRONTEND ───────────────────────────────────────────────── -->
+  <div class="layer layer-fe">
+    <div class="layer-title">Frontend Layer</div>
+    <div class="boxes">
+      <div class="box box-fe"><strong>React</strong><span>Login · Dashboard · Requests · Wellbeing</span></div>
+      <div class="box box-fe"><strong>Kira Widget</strong><span>AI chat interface</span></div>
+      <div class="box box-fe"><strong>Tailwind CSS</strong><span>Utility-first styling</span></div>
+    </div>
+  </div>
+
+  <!-- arrow -->
+  <div class="arrow">
+    <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#4f6980" stroke-width="2"></line><polyline points="2,11 8,20 14,11" fill="none" stroke="#4f6980" stroke-width="2"></polyline></svg>
+    HTTP / REST
+  </div>
+
+  <!-- ── API GATEWAY ────────────────────────────────────────────── -->
+  <div class="layer layer-api">
+    <div class="layer-title">API Gateway</div>
+    <div class="boxes">
+      <div class="box box-api"><strong>FastAPI</strong><span>Auto-generated OpenAPI docs · Pydantic validation · Async Python · Dependency injection</span></div>
+      <div class="box box-api"><strong>JWT Middleware</strong><span>Access token (15 min) · Refresh token (7 days) · Token blacklist via Redis</span></div>
+    </div>
+  </div>
+
+  <!-- arrow -->
+  <div class="arrow">
+    <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#4f6980" stroke-width="2"></line><polyline points="2,11 8,20 14,11" fill="none" stroke="#4f6980" stroke-width="2"></polyline></svg>
+    Route dispatch
+  </div>
+
+  <!-- ── ROUTES ─────────────────────────────────────────────────── -->
+  <div class="layer layer-routes">
+    <div class="layer-title">API Routes &nbsp;( app/api/routes/ )</div>
+    <div class="boxes">
+      <div class="box box-routes"><strong>Auth Routes</strong><span>POST /register · /login · /refresh · /logout</span></div>
+      <div class="box box-routes"><strong>Request Routes</strong><span>GET/POST /requests · GET/PUT /requests/{id}</span></div>
+      <div class="box box-routes"><strong>Approval Routes</strong><span>GET /approvals · POST /approve · /reject</span></div>
+      <div class="box box-routes"><strong>Wellbeing Routes</strong><span>Burnout · Counselling · POSH · Shift-Safety</span></div>
+      <div class="box box-routes"><strong>Kira Routes</strong><span>POST /kira/chat · GET /kira/greeting</span></div>
+    </div>
+  </div>
+
+  <!-- arrow -->
+  <div class="arrow">
+    <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#4f6980" stroke-width="2"></line><polyline points="2,11 8,20 14,11" fill="none" stroke="#4f6980" stroke-width="2"></polyline></svg>
+    Business logic delegation
+  </div>
+
+  <!-- ── SERVICES ───────────────────────────────────────────────── -->
+  <div class="layer layer-svc">
+    <div class="layer-title">Services Layer &nbsp;( app/services/ )</div>
+    <div class="boxes">
+      <div class="box box-svc"><strong>Auth Service</strong><span>bcrypt · JWT sign/verify · RBAC · require_role()</span></div>
+      <div class="box box-svc"><strong>Request Service</strong><span>Workflow logic · Status transitions · Notifications</span></div>
+      <div class="box box-svc"><strong>Wellbeing Service</strong><span>Burnout detection · Counselling initiation</span></div>
+    </div>
+  </div>
+
+  <!-- arrow -->
+  <div class="arrow">
+    <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#4f6980" stroke-width="2"></line><polyline points="2,11 8,20 14,11" fill="none" stroke="#4f6980" stroke-width="2"></polyline></svg>
+    Orchestration calls
+  </div>
+
+  <!-- ── AI + DATA LAYER (split) ────────────────────────────────── -->
+  <div class="split3">
+
+    <!-- Security/RBAC sidebar -->
+    <div class="layer layer-sec">
+      <div class="layer-title">Security</div>
+      <div class="boxes" style="flex-direction:column; align-items:stretch">
+        <div class="box box-sec" style="flex:none"><strong>RBAC</strong><span>Employee · Supervisor · HR · Admin</span></div>
+        <div class="box box-sec" style="flex:none"><strong>bcrypt</strong><span>Cost factor 12</span></div>
+        <div class="box box-sec" style="flex:none"><strong>AES-256</strong><span>Sensitive field encryption</span></div>
+        <div class="box box-sec" style="flex:none"><strong>HS256 JWT</strong><span>Signed tokens</span></div>
+        <div class="box box-sec" style="flex:none"><strong>HTTPS</strong><span>Enforced in production</span></div>
+      </div>
+    </div>
+
+    <!-- AI Layer (centre) -->
+    <div class="layer layer-ai">
+      <div class="layer-title">AI Layer — LangGraph Multi-Agent System</div>
+      <div class="agents-grid">
+        <div class="box box-ai agent"><strong>Request Agent</strong></div>
+        <div class="box box-ai agent"><strong>Justification Generator</strong></div>
+        <div class="box box-ai agent"><strong>Counselling Agent</strong></div>
+        <div class="box box-ai agent"><strong>Burnout Detection</strong></div>
+        <div class="box box-ai agent"><strong>POSH Agent</strong></div>
+        <div class="box box-ai agent"><strong>Shift Safety</strong></div>
+        <div class="box box-ai agent"><strong>Maternity Return</strong></div>
+        <div class="box box-ai agent"><strong>Meal Planner</strong></div>
+        <div class="box box-ai agent"><strong>Grocery Reminder</strong></div>
+        <div class="box box-ai agent"><strong>Alarm &amp; Reminder</strong></div>
+        <div class="box box-ai agent"><strong>Daily Todo</strong></div>
+        <div class="box box-ai agent"><strong>Wellbeing Tracker</strong></div>
+        <div class="box box-ai agent"><strong>Micro Learning</strong></div>
+        <div class="box box-ai agent"><strong>Policy Checker</strong></div>
+      </div>
+      <div style="margin-top:10px; font-size:.7rem; color:#c4b5fd; opacity:.8;">
+        StateGraph · Conditional branching · Human-in-the-loop checkpoints · Shared state
+      </div>
+    </div>
+
+  </div><!-- /split3 -->
+
+  <!-- arrow -->
+  <div class="arrow">
+    <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#4f6980" stroke-width="2"></line><polyline points="2,11 8,20 14,11" fill="none" stroke="#4f6980" stroke-width="2"></polyline></svg>
+    Persistence &amp; RAG retrieval
+  </div>
+
+  <!-- ── DATA LAYER ─────────────────────────────────────────────── -->
+  <div class="layer layer-data">
+    <div class="layer-title">Data Layer</div>
+    <div class="boxes">
+      <div class="box box-sqlite">
+        <strong>SQLite 3 + SQLAlchemy 2.0</strong>
+        <span>24 tables · ACID · WAL mode · Async via aiosqlite · data/sthenia.db</span>
+      </div>
+      <div class="box box-chroma">
+        <strong>ChromaDB Vector Store</strong>
+        <span>Policy document embeddings · Semantic search · RAG retrieval · data/policies/</span>
+      </div>
+      <div class="box box-redis">
+        <strong>Redis Cache</strong>
+        <span>Session management · 10-min TTL · JWT token blacklist</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /diagram -->
+
+<!-- ── LEGEND ─────────────────────────────────────────────────── -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#4338ca;"></div> Frontend</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0284c7;"></div> API Gateway</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0891b2;"></div> Routes</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#059669;"></div> Services</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#9333ea;"></div> AI / LangGraph</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#d97706;"></div> Data</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#e11d48;"></div> Security</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6b7280;"></div> Monitoring</div>
+</div>
+
+<footer>
+  STHENIA Architecture &nbsp;·&nbsp; Version 1.0 &nbsp;·&nbsp; March 13, 2026
+</footer>
+
+<script>
+  function downloadHTML() {
+    const html = document.documentElement.outerHTML;
+    const blob = new Blob(['<!DOCTYPE html>\n' + html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'STHENIA_Architecture_Diagram.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+</script>
+
+
+
+</body></html>

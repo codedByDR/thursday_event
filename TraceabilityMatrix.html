@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traceability Matrix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #00bcd4;
+            --accent-color: #ff6f00;
+            --success-color: #00c853;
+            --danger-color: #d32f2f;
+            --warning-color: #fbc02d;
+            --info-color: #2196f3;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 25%, #3949ab 50%, #3f51b5 75%, #5c6bc0 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
+        }
+        
+        .container-main {
+            background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 100%);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            padding: 35px;
+            margin-bottom: 30px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            border-bottom: 4px solid var(--secondary-color);
+            padding-bottom: 20px;
+            background: linear-gradient(135deg, rgba(0, 188, 212, 0.1), rgba(255, 111, 0, 0.05));
+            border-radius: 12px;
+            padding: 25px;
+        }
+        
+        .header h1 {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 32px;
+        }
+        
+        .header p {
+            color: #455a64;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .controls-section {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f5e9 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 6px solid var(--secondary-color);
+            border-top: 1px solid rgba(0, 188, 212, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 188, 212, 0.08);
+        }
+        
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+        
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-item label {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .filter-item select,
+        .filter-item input {
+            padding: 11px 14px;
+            border: 2px solid #b3e5fc;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .filter-item select:focus,
+        .filter-item input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.15);
+            background: #f0f9fa;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+        
+        .btn-custom {
+            padding: 11px 22px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-filter {
+            background: linear-gradient(135deg, var(--secondary-color), #0097a7);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+        }
+        
+        .btn-filter:hover {
+            background: linear-gradient(135deg, #00bcd4, #00838f);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 188, 212, 0.4);
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, var(--success-color), #00a820);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+        }
+        
+        .btn-download:hover {
+            background: linear-gradient(135deg, #00d060, #00891a);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 200, 83, 0.4);
+        }
+        
+        .btn-reset {
+            background: linear-gradient(135deg, #90a4ae, #607d8b);
+            color: white;
+            box-shadow: 0 4px 12px rgba(144, 164, 174, 0.3);
+        }
+        
+        .btn-reset:hover {
+            background: linear-gradient(135deg, #78909c, #455a64);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(144, 164, 174, 0.4);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .table {
+            margin-bottom: 0;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-color), #283593);
+            color: white;
+            font-weight: 700;
+            border: none;
+            padding: 16px 15px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+        
+        .table tbody td {
+            padding: 14px 15px;
+            vertical-align: middle;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .table tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .table tbody tr:nth-child(odd) {
+            background: #fafafa;
+        }
+        
+        .table tbody tr:nth-child(even) {
+            background: #f5f5f5;
+        }
+        
+        .table tbody tr:hover {
+            background: linear-gradient(90deg, #e3f2fd 0%, #f3e5f5 100%);
+            box-shadow: inset 4px 0 0 0 var(--secondary-color);
+            padding-left: 5px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-implemented {
+            background: linear-gradient(135deg, #1b5e20, #0d3817);
+            color: white;
+            border: 1px solid #0d3817;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, #fff9c4, #fff59d);
+            color: #f57f17;
+            border: 1px solid #fdd835;
+        }
+        
+        .status-testing {
+            background: linear-gradient(135deg, #bbdefb, #90caf9);
+            color: #1565c0;
+            border: 1px solid #42a5f5;
+        }
+        
+        .stats-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 2px solid rgba(0, 188, 212, 0.2);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 16px;
+            background: linear-gradient(135deg, #ffffff, #f5f5f5);
+            border-radius: 8px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        
+        .stat-item:nth-child(1) {
+            border-color: var(--secondary-color);
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+        }
+        
+        .stat-item:nth-child(2) {
+            border-color: var(--success-color);
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        }
+        
+        .stat-item:nth-child(3) {
+            border-color: var(--accent-color);
+            background: linear-gradient(135deg, #ffe0b2, #ffcc80);
+        }
+        
+        .stat-item:nth-child(4) {
+            border-color: var(--info-color);
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-label {
+            color: #455a64;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .module-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+            box-shadow: 0 3px 8px rgba(156, 39, 176, 0.3);
+            border: 1px solid rgba(156, 39, 176, 0.5);
+        }
+        
+        .impl-file {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
+            border: 1px solid rgba(255, 152, 0, 0.5);
+            word-break: break-word;
+        }
+        
+        .api-endpoint {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            box-shadow: 0 2px 6px rgba(244, 67, 54, 0.3);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            word-break: break-word;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0.6em 0.85em;
+            cursor: pointer;
+            border-radius: 6px;
+            margin: 0 4px;
+            transition: all 0.2s;
+            background: linear-gradient(135deg, #e0e0e0, #d0d0d0);
+            color: var(--primary-color);
+            font-weight: 600;
+            border: 1px solid #b0b0b0;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: linear-gradient(135deg, var(--secondary-color), #0097a7);
+            color: white;
+            border-color: var(--secondary-color);
+            box-shadow: 0 4px 10px rgba(0, 188, 212, 0.3);
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.disabled) {
+            background: linear-gradient(135deg, var(--secondary-color), #0097a7);
+            color: white;
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 188, 212, 0.3);
+        }
+        
+        .data-loading {
+            text-align: center;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .no-data-message {
+            text-align: center;
+            padding: 50px 40px;
+            color: #90a4ae;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .controls-section {
+                display: none;
+            }
+            .table {
+                font-size: 11px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .filter-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-custom {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .table {
+                font-size: 12px;
+            }
+            
+            .table thead th,
+            .table tbody td {
+                padding: 8px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container container-main">
+        <div class="header">
+            <h1><i class="fas fa-project-diagram"></i> Traceability Matrix</h1>
+            <p>Interactive Requirements & Implementation Tracking Dashboard</p>
+        </div>
+        
+        <div class="controls-section">
+            <h5 style="color: var(--primary-color); margin-bottom: 15px;">
+                <i class="fas fa-filter"></i> Filters & Search
+            </h5>
+            
+            <div class="filter-group">
+                <div class="filter-item">
+                    <label for="filterModule">Module</label>
+                    <select id="filterModule">
+                        <option value="">All Modules</option>
+                    </select>
+                </div>
+                
+                <div class="filter-item">
+                    <label for="filterStatus">Status</label>
+                    <select id="filterStatus">
+                        <option value="">All Status</option>
+                        <option value="Implemented">Implemented</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Testing">Testing</option>
+                    </select>
+                </div>
+                
+                <div class="filter-item">
+                    <label for="searchText">Search</label>
+                    <input type="text" id="searchText" placeholder="Search by any field...">
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-custom btn-filter" onclick="applyFilters()">
+                    <i class="fas fa-search"></i> Apply Filters
+                </button>
+                <button class="btn-custom btn-reset" onclick="resetFilters()">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+                <button class="btn-custom btn-download" onclick="downloadCSV()">
+                    <i class="fas fa-download"></i> Download CSV
+                </button>
+                <button class="btn-custom btn-download" onclick="downloadPDF()">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </button>
+            </div>
+            
+            <div class="stats-box" id="statsBox">
+                <div class="stat-item">
+                    <div class="stat-label">Total Requirements</div>
+                    <div class="stat-value" id="totalReq">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Implemented</div>
+                    <div class="stat-value" id="implementedReq">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Modules</div>
+                    <div class="stat-value" id="moduleCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Test Cases</div>
+                    <div class="stat-value" id="testCount">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="matrixTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Requirement ID</th>
+                        <th>Description</th>
+                        <th>Module</th>
+                        <th>Implementation File</th>
+                        <th>API Endpoint</th>
+                        <th>Test Case IDs</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="7" class="data-loading"><i class="fas fa-spinner fa-spin"></i> Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <script>
+        // Data array
+        const data = [
+            {requirement_id: "FR-01-01", requirement_description: "User registration with full profile", module: "Authentication", implementation_file: "backend/routes/auth.py", api_endpoint: "POST /auth/register", test_case_ids: "TC-001 TC-002", status: "Implemented"},
+            {requirement_id: "FR-01-02", requirement_description: "Email OTP verification", module: "Authentication", implementation_file: "backend/routes/auth.py", api_endpoint: "POST /auth/verify-otp", test_case_ids: "TC-001 TC-009", status: "Implemented"},
+            {requirement_id: "FR-01-03", requirement_description: "JWT access + refresh token issuance", module: "Authentication", implementation_file: "backend/routes/auth.py", api_endpoint: "POST /auth/login", test_case_ids: "TC-003 TC-006", status: "Implemented"},
+            {requirement_id: "FR-01-04", requirement_description: "Silent token refresh", module: "Authentication", implementation_file: "frontend/src/services/api.ts", api_endpoint: "POST /auth/refresh", test_case_ids: "TC-006", status: "Implemented"},
+            {requirement_id: "FR-01-05", requirement_description: "Password complexity enforcement", module: "Authentication", implementation_file: "backend/schemas/schemas.py", api_endpoint: "POST /auth/register", test_case_ids: "TC-001 TC-002", status: "Implemented"},
+            {requirement_id: "FR-01-06", requirement_description: "bcrypt password hashing", module: "Authentication", implementation_file: "backend/routes/auth.py", api_endpoint: "POST /auth/register", test_case_ids: "TC-004 TC-050", status: "Implemented"},
+            {requirement_id: "FR-01-07", requirement_description: "Redis session with 10-min TTL", module: "Authentication", implementation_file: "backend/services/scheduler.py", api_endpoint: "All authenticated routes", test_case_ids: "TC-005 TC-006", status: "Implemented"},
+            {requirement_id: "FR-01-08", requirement_description: "User profile editing", module: "Profile", implementation_file: "frontend/src/pages/ProfilePage.tsx", api_endpoint: "PUT /auth/profile", test_case_ids: "TC-059", status: "Implemented"},
+            {requirement_id: "FR-01-09", requirement_description: "Password change with current verification", module: "Profile", implementation_file: "backend/routes/auth.py", api_endpoint: "PUT /auth/password", test_case_ids: "TC-007 TC-008", status: "Implemented"},
+            {requirement_id: "FR-02-01", requirement_description: "Create requests of 9 types", module: "Requests", implementation_file: "frontend/src/pages/RequestsPage.tsx", api_endpoint: "POST /requests/submit", test_case_ids: "TC-010 TC-011", status: "Implemented"},
+            {requirement_id: "FR-02-02", requirement_description: "AI formalisation of request text", module: "Requests", implementation_file: "backend/agents/request_agent.py", api_endpoint: "POST /requests/submit", test_case_ids: "TC-015", status: "Implemented"},
+            {requirement_id: "FR-02-03", requirement_description: "AI HR justification with RAG", module: "Requests", implementation_file: "backend/agents/request_agent.py + rag_service.py", api_endpoint: "POST /requests/submit", test_case_ids: "TC-010", status: "Implemented"},
+            {requirement_id: "FR-02-04", requirement_description: "Document attachment (PDF/JPG/DOCX 10MB)", module: "Requests", implementation_file: "backend/routes/requests.py", api_endpoint: "POST /requests/submit", test_case_ids: "TC-012 TC-013", status: "Implemented"},
+            {requirement_id: "FR-02-05", requirement_description: "Auto-approval for WFH/flexi/study", module: "Requests", implementation_file: "backend/agents/graph.py", api_endpoint: "POST /requests/submit", test_case_ids: "TC-010", status: "Implemented"},
+            {requirement_id: "FR-02-06", requirement_description: "Medical/emergency routed to supervisor", module: "Requests", implementation_file: "backend/agents/graph.py", api_endpoint: "POST /requests/submit", test_case_ids: "TC-011", status: "Implemented"},
+            {requirement_id: "FR-02-07", requirement_description: "Escalation to HR", module: "Approvals", implementation_file: "backend/routes/approvals.py", api_endpoint: "POST /approvals/escalate", test_case_ids: "TC-016", status: "Implemented"},
+            {requirement_id: "FR-02-08", requirement_description: "Magic link tokens (UUID 24h expiry)", module: "Requests", implementation_file: "backend/routes/requests.py", api_endpoint: "POST /requests/submit", test_case_ids: "TC-058", status: "Implemented"},
+            {requirement_id: "FR-02-09", requirement_description: "7-day auto-close for pending requests", module: "Requests", implementation_file: "backend/services/scheduler.py", api_endpoint: "Scheduler job", test_case_ids: "TC-056", status: "Implemented"},
+            {requirement_id: "FR-02-10", requirement_description: "48h SLA enforcement", module: "Requests", implementation_file: "backend/services/scheduler.py", api_endpoint: "Scheduler job", test_case_ids: "TC-056", status: "Implemented"},
+            {requirement_id: "FR-02-11", requirement_description: "Request status state machine", module: "Requests", implementation_file: "backend/models/models.py", api_endpoint: "Multiple request endpoints", test_case_ids: "TC-010 TC-011 TC-016", status: "Implemented"},
+            {requirement_id: "FR-03-01", requirement_description: "Supervisor pending requests view", module: "Approvals", implementation_file: "frontend/src/pages/ApprovalsPage.tsx", api_endpoint: "GET /approvals/pending", test_case_ids: "TC-016 TC-018", status: "Implemented"},
+            {requirement_id: "FR-03-02", requirement_description: "Approve/reject with remarks", module: "Approvals", implementation_file: "frontend/src/pages/ApprovalsPage.tsx", api_endpoint: "POST /approvals/decide", test_case_ids: "TC-016 TC-017", status: "Implemented"},
+            {requirement_id: "FR-03-03", requirement_description: "Decision email to employee", module: "Approvals", implementation_file: "backend/services/email_service.py", api_endpoint: "POST /approvals/decide", test_case_ids: "TC-057 TC-058", status: "Implemented"},
+            {requirement_id: "FR-03-04", requirement_description: "HR override of supervisor", module: "Approvals", implementation_file: "backend/routes/approvals.py", api_endpoint: "POST /approvals/decide", test_case_ids: "TC-018", status: "Implemented"},
+            {requirement_id: "FR-04-01", requirement_description: "Daily wellbeing check-in fields", module: "Wellbeing", implementation_file: "frontend/src/pages/WellbeingPage.tsx", api_endpoint: "POST /wellbeing/checkin", test_case_ids: "TC-019", status: "Implemented"},
+            {requirement_id: "FR-04-02", requirement_description: "WLB score calculation", module: "Wellbeing", implementation_file: "backend/routes/wellbeing.py", api_endpoint: "POST /wellbeing/checkin", test_case_ids: "TC-019", status: "Implemented"},
+            {requirement_id: "FR-04-03", requirement_description: "14-day wellbeing history", module: "Wellbeing", implementation_file: "frontend/src/pages/WellbeingPage.tsx", api_endpoint: "GET /wellbeing/history", test_case_ids: "TC-021", status: "Implemented"},
+            {requirement_id: "FR-04-04", requirement_description: "Burnout risk level calculation", module: "Wellbeing", implementation_file: "backend/routes/wellbeing.py", api_endpoint: "POST /wellbeing/checkin", test_case_ids: "TC-020", status: "Implemented"},
+            {requirement_id: "FR-04-05", requirement_description: "Burnout auto-alert to HR", module: "Wellbeing", implementation_file: "backend/services/scheduler.py", api_endpoint: "Scheduler job", test_case_ids: "TC-020", status: "Implemented"},
+            {requirement_id: "FR-04-06", requirement_description: "Daily wellbeing reminder email", module: "Wellbeing", implementation_file: "backend/services/scheduler.py", api_endpoint: "Scheduler job", test_case_ids: "TC-056", status: "Implemented"},
+            {requirement_id: "FR-05-01", requirement_description: "Anonymous counselling sessions", module: "Counselling", implementation_file: "frontend/src/pages/CounsellingPage.tsx", api_endpoint: "POST /counselling/sessions", test_case_ids: "TC-022", status: "Implemented"},
+            {requirement_id: "FR-05-02", requirement_description: "Multiple sessions with message history", module: "Counselling", implementation_file: "backend/routes/counselling.py", api_endpoint: "GET/POST /counselling/sessions", test_case_ids: "TC-022 TC-024", status: "Implemented"},
+            {requirement_id: "FR-05-03", requirement_description: "CBT counselling AI persona", module: "Counselling", implementation_file: "backend/agents/counselling_agent.py", api_endpoint: "POST /counselling/chat", test_case_ids: "TC-022", status: "Implemented"},
+            {requirement_id: "FR-05-04", requirement_description: "Crisis detection and HR escalation", module: "Counselling", implementation_file: "frontend/src/components/kira/KiraChat.tsx", api_endpoint: "POST /counselling/chat", test_case_ids: "TC-023", status: "Implemented"},
+            {requirement_id: "FR-05-05", requirement_description: "Session deletion", module: "Counselling", implementation_file: "frontend/src/pages/CounsellingPage.tsx", api_endpoint: "DELETE /counselling/sessions/{id}", test_case_ids: "TC-024", status: "Implemented"},
+            {requirement_id: "FR-06-01", requirement_description: "Anonymous POSH report filing", module: "Harassment", implementation_file: "frontend/src/pages/HarassmentPage.tsx", api_endpoint: "POST /harassment/report", test_case_ids: "TC-025 TC-028", status: "Implemented"},
+            {requirement_id: "FR-06-02", requirement_description: "Cryptographic identity separation", module: "Harassment", implementation_file: "backend/routes/harassment.py", api_endpoint: "POST /harassment/report", test_case_ids: "TC-028", status: "Implemented"},
+            {requirement_id: "FR-06-03", requirement_description: "8 incident types", module: "Harassment", implementation_file: "frontend/src/pages/HarassmentPage.tsx", api_endpoint: "POST /harassment/report", test_case_ids: "TC-025", status: "Implemented"},
+            {requirement_id: "FR-06-04", requirement_description: "Unique tracking ID + case number", module: "Harassment", implementation_file: "backend/routes/harassment.py", api_endpoint: "POST /harassment/report", test_case_ids: "TC-025 TC-026", status: "Implemented"},
+            {requirement_id: "FR-06-05", requirement_description: "Status tracking by ID", module: "Harassment", implementation_file: "frontend/src/pages/HarassmentPage.tsx", api_endpoint: "GET /harassment/track/{id}", test_case_ids: "TC-026 TC-027", status: "Implemented"},
+            {requirement_id: "FR-06-06", requirement_description: "ICC email notification", module: "Harassment", implementation_file: "backend/services/email_service.py", api_endpoint: "POST /harassment/report", test_case_ids: "TC-025", status: "Implemented"},
+            {requirement_id: "FR-06-07", requirement_description: "Fernet encryption for sensitive fields", module: "Harassment", implementation_file: "backend/routes/harassment.py", api_endpoint: "POST /harassment/report", test_case_ids: "TC-028", status: "Implemented"},
+            {requirement_id: "FR-07-01", requirement_description: "AI meal planner", module: "Assistants", implementation_file: "frontend/src/pages/AssistantsPage.tsx", api_endpoint: "POST /assistants/meal-plan", test_case_ids: "TC-029", status: "Implemented"},
+            {requirement_id: "FR-07-02", requirement_description: "Grocery list management", module: "Assistants", implementation_file: "frontend/src/pages/AssistantsPage.tsx", api_endpoint: "CRUD /assistants/grocery", test_case_ids: "TC-030", status: "Implemented"},
+            {requirement_id: "FR-07-03", requirement_description: "Grocery reminder scheduler", module: "Assistants", implementation_file: "backend/services/scheduler.py", api_endpoint: "Scheduler job", test_case_ids: "TC-056", status: "Implemented"},
+            {requirement_id: "FR-07-04", requirement_description: "Alarms with labels", module: "Assistants", implementation_file: "frontend/src/pages/AssistantsPage.tsx", api_endpoint: "CRUD /assistants/alarms", test_case_ids: "TC-031", status: "Implemented"},
+            {requirement_id: "FR-07-05", requirement_description: "Priority todo list", module: "Assistants", implementation_file: "frontend/src/pages/AssistantsPage.tsx", api_endpoint: "CRUD /assistants/todos", test_case_ids: "TC-031", status: "Implemented"},
+            {requirement_id: "FR-08-01", requirement_description: "Shift logging with fields", module: "Shift Safety", implementation_file: "frontend/src/pages/ShiftPage.tsx", api_endpoint: "POST /shift/log", test_case_ids: "TC-032", status: "Implemented"},
+            {requirement_id: "FR-08-02", requirement_description: "Night shift detection (after 8 PM)", module: "Shift Safety", implementation_file: "backend/routes/shift.py", api_endpoint: "POST /shift/log", test_case_ids: "TC-032", status: "Implemented"}
+        ];
+        
+        let filteredData = [...data];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            populateFilters();
+            renderTable(data);
+            updateStats(data);
+        });
+        
+        function populateFilters() {
+            const modules = [...new Set(data.map(item => item.module))].sort();
+            const moduleSelect = document.getElementById('filterModule');
+            modules.forEach(module => {
+                const option = document.createElement('option');
+                option.value = module;
+                option.textContent = module;
+                moduleSelect.appendChild(option);
+            });
+        }
+        
+        function renderTable(tableData) {
+            const tbody = document.getElementById('tableBody');
+            
+            if (tableData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="no-data-message">No records found matching your filters</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = tableData.map(item => `
+                <tr>
+                    <td><strong>${escapeHtml(item.requirement_id)}</strong></td>
+                    <td>${escapeHtml(item.requirement_description)}</td>
+                    <td><span class="module-badge">${escapeHtml(item.module)}</span></td>
+                    <td><span class="impl-file">${escapeHtml(item.implementation_file)}</span></td>
+                    <td><span class="api-endpoint">${escapeHtml(item.api_endpoint)}</span></td>
+                    <td>${escapeHtml(item.test_case_ids)}</td>
+                    <td><span class="status-badge status-${item.status.toLowerCase().replace(/\s+/g, '')}">${escapeHtml(item.status)}</span></td>
+                </tr>
+            `).join('');
+        }
+        
+        function applyFilters() {
+            const moduleFilter = document.getElementById('filterModule').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            const searchText = document.getElementById('searchText').value.toLowerCase();
+            
+            filteredData = data.filter(item => {
+                const matchModule = !moduleFilter || item.module === moduleFilter;
+                const matchStatus = !statusFilter || item.status === statusFilter;
+                const matchSearch = !searchText || 
+                    Object.values(item).some(val => 
+                        String(val).toLowerCase().includes(searchText)
+                    );
+                return matchModule && matchStatus && matchSearch;
+            });
+            
+            renderTable(filteredData);
+            updateStats(filteredData);
+        }
+        
+        function resetFilters() {
+            document.getElementById('filterModule').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('searchText').value = '';
+            filteredData = [...data];
+            renderTable(data);
+            updateStats(data);
+        }
+        
+        function updateStats(tableData) {
+            const totalReq = tableData.length;
+            const implementedReq = tableData.filter(item => item.status === 'Implemented').length;
+            const modules = new Set(tableData.map(item => item.module)).size;
+            const testCases = new Set(tableData.flatMap(item => item.test_case_ids.split(' '))).size;
+            
+            document.getElementById('totalReq').textContent = totalReq;
+            document.getElementById('implementedReq').textContent = implementedReq;
+            document.getElementById('moduleCount').textContent = modules;
+            document.getElementById('testCount').textContent = testCases;
+        }
+        
+        function downloadCSV() {
+            const headers = ['Requirement ID', 'Description', 'Module', 'Implementation File', 'API Endpoint', 'Test Case IDs', 'Status'];
+            const rows = filteredData.map(item => [
+                item.requirement_id,
+                item.requirement_description,
+                item.module,
+                item.implementation_file,
+                item.api_endpoint,
+                item.test_case_ids,
+                item.status
+            ]);
+            
+            let csvContent = '"' + headers.join('","') + '"\n';
+            rows.forEach(row => {
+                csvContent += '"' + row.map(cell => String(cell).replace(/"/g, '""')).join('","') + '"\n';
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'TraceabilityMatrix.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function downloadPDF() {
+            const element = document.querySelector('.table-container');
+            const opt = {
+                margin: 10,
+                filename: 'TraceabilityMatrix.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+        
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+        
+        // Real-time search
+        document.getElementById('searchText').addEventListener('keyup', function() {
+            applyFilters();
+        });
+    </script>
+</body>
+</html>
