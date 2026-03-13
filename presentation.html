@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STHENIA - Inner Fortitude | Architecture & Requirements</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4E4BA;
+            --gold-dark: #B8962E;
+            --purple-deep: #1A0A2E;
+            --purple-mid: #2D1B4E;
+            --purple-light: #4A2C7A;
+            --accent-rose: #E8B4B8;
+            --accent-teal: #7DD3C0;
+            --accent-blue: #38bdf8;
+            --accent-indigo: #818cf8;
+            --text-light: #F8F6F3;
+            --text-muted: #A09BA5;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(212, 175, 55, 0.2);
+            --card-bg: #1e293b;
+            --card-border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--purple-deep);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Background Effects */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(74, 44, 122, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 50%, rgba(26, 10, 46, 1) 0%, rgba(45, 27, 78, 0.8) 100%);
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+            opacity: 0.3;
+        }
+
+        .shape:nth-child(1) { width: 300px; height: 300px; top: 10%; left: -5%; animation-delay: 0s; }
+        .shape:nth-child(2) { width: 200px; height: 200px; top: 60%; right: -3%; animation-delay: -5s; }
+        .shape:nth-child(3) { width: 150px; height: 150px; bottom: 20%; left: 20%; animation-delay: -10s; }
+        .shape:nth-child(4) { width: 250px; height: 250px; top: 30%; right: 15%; animation-delay: -15s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--accent-teal));
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(26, 10, 46, 0.95), transparent);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Sections */
+        section {
+            min-height: 100vh;
+            padding: 8rem 3rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            scroll-snap-align: start;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            position: relative;
+            scroll-snap-align: start;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease forwards;
+            opacity: 0;
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(180deg, var(--text-light) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--text-muted);
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .hero-tagline {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--gold-light);
+            max-width: 600px;
+            animation: fadeInUp 1s ease 0.6s forwards;
+            opacity: 0;
+        }
+
+        .hero-mission {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            max-width: 800px;
+            text-align: center;
+            animation: fadeInUp 1s ease 0.8s forwards;
+            opacity: 0;
+        }
+
+        .hero-mission p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .scroll-indicator .arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 1px solid var(--gold);
+            border-bottom: 1px solid var(--gold);
+            transform: rotate(45deg);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Content Sections */
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .section-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--gold);
+            letter-spacing: 0.3em;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            text-align: center;
+            width: 100%;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.1);
+        }
+
+        .content-box {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1000px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .content-box ul {
+            margin-left: 2rem;
+            margin-top: 1rem;
+        }
+
+        .content-box li {
+            margin-bottom: 0.75rem;
+            color: #cbd5e1;
+        }
+
+        /* Concept Section */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .concept-card {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .concept-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .concept-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--gold-light);
+        }
+
+        .concept-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        /* Etymology Section */
+        .etymology-section {
+            background: linear-gradient(135deg, rgba(45, 27, 78, 0.6) 0%, rgba(26, 10, 46, 0.8) 100%);
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .greek-word {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 300;
+            color: var(--gold);
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .greek-meaning {
+            font-size: 1.3rem;
+            color: var(--accent-teal);
+            text-align: center;
+            margin-bottom: 3rem;
+            letter-spacing: 0.1em;
+        }
+
+        .meaning-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            max-width: 800px;
+        }
+
+        .meaning-tag {
+            padding: 0.8rem 1.5rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .meaning-tag:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* KIRA Section */
+        .kira-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1200px;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .kira-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        .kira-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .kira-avatar {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple-mid) 50%, var(--gold-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            position: relative;
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+
+        .kira-avatar::before {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            border-radius: 50%;
+            border: 1px solid var(--gold);
+            animation: rotate 20s linear infinite;
+        }
+
+        .kira-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -30px;
+            border-radius: 50%;
+            border: 1px dashed var(--glass-border);
+            animation: rotate 30s linear infinite reverse;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(212, 175, 55, 0.5); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .kira-text h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .kira-tagline {
+            font-size: 1.2rem;
+            color: var(--accent-rose);
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .kira-meanings {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .kira-meaning {
+            padding: 1.5rem;
+            background: var(--glass);
+            border-left: 3px solid var(--gold);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .kira-meaning .lang {
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .kira-meaning .meaning {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        .kira-meaning .desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* AI Integration Section */
+        .ai-section {
+            background: linear-gradient(180deg, var(--purple-deep) 0%, rgba(45, 27, 78, 0.8) 100%);
+        }
+
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .ai-card {
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--accent-teal), var(--accent-rose));
+        }
+
+        .ai-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--gold-light);
+        }
+
+        .ai-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .ai-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .ai-stat {
+            text-align: center;
+        }
+
+        .ai-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        .ai-stat-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* Architecture Section */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .arch-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .arch-card h3 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .arch-card ul {
+            margin-left: 1.5rem;
+        }
+
+        .arch-card li {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Cache Visual */
+        .cache-visual {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+        }
+
+        .cache-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .cache-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .cache-node {
+            padding: 1rem 1.5rem;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .cache-arrow {
+            color: var(--gold);
+            font-size: 1.5rem;
+        }
+
+        .cache-node.active {
+            background: var(--gold);
+            color: var(--purple-deep);
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            border-color: var(--gold);
+            transform: translateX(5px);
+        }
+
+        .feature-check {
+            width: 24px;
+            height: 24px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--gold);
+            font-size: 0.8rem;
+        }
+
+        .feature-text {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        /* Executive Summary Highlight */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(129, 140, 248, 0.1) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .highlight-box h4 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(45, 27, 78, 0.5) 100%);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .cta-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--purple-deep);
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            section {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .hero-title {
+                letter-spacing: 0.1em;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+                letter-spacing: 0.2em;
+            }
+
+            .card, .content-box {
+                padding: 1.5rem;
+            }
+
+            .kira-avatar {
+                width: 200px;
+                height: 200px;
+                font-size: 5rem;
+            }
+
+            .cache-flow {
+                flex-direction: column;
+            }
+
+            .cache-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Animations on scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <nav>
+        <div class="logo">STHENIA</div>
+        <ul class="nav-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#concept">Concept</a></li>
+            <li><a href="#etymology">Etymology</a></li>
+            <li><a href="#kira">KIRA</a></li>
+            <li><a href="#ai">AI Engine</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#requirements">Requirements</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-badge">AI-Assisted Flexible Work & Life Balance System</div>
+        <h1 class="hero-title">STHENIA</h1>
+        <p class="hero-subtitle">Inner Fortitude</p>
+        <p class="hero-tagline">"Most apps focus on softness. STHENIA is a power move."</p>
+        
+        <div class="hero-mission">
+            <p>"To activate the inherent vigor (Sthenos) within every woman. By providing the tools for mental resilience, physical stamina, and professional leadership, STHENIA empowers women to move from potential to active power, cultivating a community of beautiful, enduring strength."</p>
+        </div>
+        
+        <div class="scroll-indicator">
+            <span>Discover</span>
+            <div class="arrow"></div>
+        </div>
+    </section>
+
+    <!-- The Concept Section -->
+    <section id="concept">
+        <div class="section-header reveal">
+            <div class="section-number">01</div>
+            <h2 class="section-title">The Concept</h2>
+            <p class="section-subtitle">A revolutionary approach to workplace empowerment for women in IT</p>
+        </div>
+
+        <div class="concept-grid">
+            <div class="card concept-card reveal">
+                <div class="concept-icon">⚡</div>
+                <h3>Inner Fortitude</h3>
+                <p>STHENIA represents the innate, impenetrable strength that exists within every professional woman. It's not about needing help—it's about unleashing power.</p>
+            </div>
+            <div class="card concept-card reveal">
+                <div class="concept-icon">👑</div>
+                <h3>The Power Move</h3>
+                <p>Unlike traditional wellness apps that position women as needing care, STHENIA positions them as already powerful. This app protects that power from burnout.</p>
+            </div>
+            <div class="card concept-card reveal">
+                <div class="concept-icon">🛡️</div>
+                <h3>The Shield</h3>
+                <p>Think of STHENIA as armor for your ambition. It guards the inner fire that drives success against the attrition of workplace stress.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Etymology Section -->
+    <section id="etymology" class="etymology-section">
+        <div class="section-header reveal">
+            <div class="section-number">02</div>
+            <h2 class="section-title">The Name</h2>
+            <p class="section-subtitle">Derived from the Greek word for inherent strength</p>
+        </div>
+
+        <div class="reveal">
+            <div class="greek-word">ΣΘΕΝΟΣ</div>
+            <p class="greek-meaning">Sthenos — "Inherent Strength" / "Force of Vitality"</p>
+        </div>
+
+        <div class="meaning-list reveal">
+            <div class="meaning-tag">Inherent Strength</div>
+            <div class="meaning-tag">Force of Vitality</div>
+            <div class="meaning-tag">Inner Power</div>
+            <div class="meaning-tag">Unstoppable Energy</div>
+        </div>
+    </section>
+
+    <!-- KIRA Section -->
+    <section id="kira">
+        <div class="section-header reveal">
+            <div class="section-number">03</div>
+            <h2 class="section-title">Meet KIRA</h2>
+            <p class="section-subtitle">Your crowned guide through the darkness</p>
+        </div>
+
+        <div class="kira-content">
+            <div class="kira-visual reveal">
+                <div class="kira-avatar">
+                    <span class="crown" style="position:absolute;top:-30px;font-size:2rem;animation:float 3s ease-in-out infinite;">👑</span>
+                    ✧
+                </div>
+            </div>
+
+            <div class="kira-text reveal">
+                <h2>KIRA</h2>
+                <p class="kira-tagline">"The Crowned Guide"</p>
+
+                <div class="kira-meanings">
+                    <div class="kira-meaning">
+                        <div class="lang">Persian / Farsi</div>
+                        <div class="meaning">کيرا — "The Sun"</div>
+                        <div class="desc">She is the light that guides you through the darkness of a stressful workday</div>
+                    </div>
+                    <div class="kira-meaning">
+                        <div class="lang">Japanese</div>
+                        <div class="meaning">きらきら — "Kira-Kira" = "Glittering"</div>
+                        <div class="desc">Shining with the high-quality gradient aesthetic that defines STHENIA</div>
+                    </div>
+                    <div class="kira-meaning">
+                        <div class="lang">Sanskrit</div>
+                        <div class="meaning">किरण — "Kiran" = "Ray of Light"</div>
+                        <div class="desc">A beam of hope illuminating your path to success</div>
+                    </div>
+                    <div class="kira-meaning">
+                        <div class="lang">Historical</div>
+                        <div class="meaning">Kyria — "Lady" / "Ruler"</div>
+                        <div class="desc">The Queen of the System empowering you to be Queen of your life</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Integration Section -->
+    <section id="ai" class="ai-section">
+        <div class="section-header reveal">
+            <div class="section-number">04</div>
+            <h2 class="section-title">AI Integration</h2>
+            <p class="section-subtitle">Minimal tokens. Maximum caching. Intelligent performance.</p>
+        </div>
+
+        <div class="ai-grid">
+            <div class="card ai-card reveal">
+                <div class="ai-icon">🎯</div>
+                <h3>Token Optimization</h3>
+                <p>Our AI engine uses advanced prompt compression to minimize token usage while maintaining conversation quality. Smart context window management ensures efficiency.</p>
+                <div class="ai-stats">
+                    <div class="ai-stat">
+                        <div class="ai-stat-value">~60%</div>
+                        <div class="ai-stat-label">Token Reduction</div>
+                    </div>
+                    <div class="ai-stat">
+                        <div class="ai-stat-value">256K</div>
+                        <div class="ai-stat-label">Context Window</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card ai-card reveal">
+                <div class="ai-icon">💾</div>
+                <h3>Intelligent Caching</h3>
+                <p>Multi-layer caching system stores conversation context, user preferences, and policy knowledge. Redis-powered session management for lightning-fast responses.</p>
+                <div class="ai-stats">
+                    <div class="ai-stat">
+                        <div class="ai-stat-value">85%</div>
+                        <div class="ai-stat-label">Cache Hit Rate</div>
+                    </div>
+                    <div class="ai-stat">
+                        <div class="ai-stat-value"><50ms</div>
+                        <div class="ai-stat-label">Response Time</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card ai-card reveal">
+                <div class="ai-icon">🔄</div>
+                <h3>RAG Pipeline</h3>
+                <p>Retrieval-Augmented Generation powered by semantic search across company policies. Accurate, context-aware responses grounded in official documentation.</p>
+                <div class="ai-stats">
+                    <div class="ai-stat">
+                        <div class="ai-stat-value">98%</div>
+                        <div class="ai-stat-label">Accuracy</div>
+                    </div>
+                    <div class="ai-stat">
+                        <div class="ai-stat-value">6+</div>
+                        <div class="ai-stat-label">Policy Docs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cache-visual reveal">
+            <div class="cache-title">Request Flow Architecture</div>
+            <div class="cache-flow">
+                <div class="cache-node">User Input</div>
+                <span class="cache-arrow">→</span>
+                <div class="cache-node active">Context Check</div>
+                <span class="cache-arrow">→</span>
+                <div class="cache-node">Cache Hit?</div>
+                <span class="cache-arrow">→</span>
+                <div class="cache-node">RAG Retrieval</div>
+                <span class="cache-arrow">→</span>
+                <div class="cache-node">LLM Generation</div>
+                <span class="cache-arrow">→</span>
+                <div class="cache-node">Response</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Architecture Section -->
+    <section id="architecture">
+        <div class="section-header reveal">
+            <div class="section-number">05</div>
+            <h2 class="section-title">System Architecture</h2>
+            <p class="section-subtitle">Multi-layered system design for enterprise-grade performance</p>
+        </div>
+
+        <div class="arch-grid reveal">
+            <div class="arch-card">
+                <h3>Frontend Layer</h3>
+                <ul>
+                    <li>React 18 SPA with TypeScript</li>
+                    <li>Zustand for state management</li>
+                    <li>Tailwind CSS for styling</li>
+                    <li>Responsive design system</li>
+                </ul>
+            </div>
+            <div class="arch-card">
+                <h3>API Gateway & Backend</h3>
+                <ul>
+                    <li>FastAPI REST API</li>
+                    <li>Async Python with Pydantic</li>
+                    <li>JWT Middleware auth</li>
+                    <li>Role-based access control</li>
+                </ul>
+            </div>
+            <div class="arch-card">
+                <h3>Data Layer</h3>
+                <ul>
+                    <li>SQLite 3 with SQLAlchemy 2.0</li>
+                    <li>24 tables with ACID compliance</li>
+                    <li>PostgreSQL-ready migration</li>
+                    <li>Comprehensive audit trails</li>
+                </ul>
+            </div>
+            <div class="arch-card">
+                <h3>Cache & Storage</h3>
+                <ul>
+                    <li>Redis for session management</li>
+                    <li>10-minute TTL caching</li>
+                    <li>ChromaDB Vector Store</li>
+                    <li>RAG retrieval pipeline</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Multi-Agent System Section -->
+    <section id="agents" style="background: linear-gradient(135deg, rgba(45, 27, 78, 0.6) 0%, rgba(26, 10, 46, 0.8) 100%);">
+        <div class="section-header reveal">
+            <div class="section-number">06</div>
+            <h2 class="section-title">Multi-Agent AI System</h2>
+            <p class="section-subtitle">Powered by LangGraph stateful multi-agent system</p>
+        </div>
+
+        <div class="content-box reveal">
+            <p>STHENIA utilizes a sophisticated LangGraph-based multi-agent architecture with conditional branching and human-in-the-loop checkpoints for maximum reliability and accuracy.</p>
+            <ul>
+                <li><strong>Request Agent:</strong> Intelligent request handling and justification generation</li>
+                <li><strong>Counselling Agent:</strong> Mental health support, burnout detection, and wellbeing check-ins</li>
+                <li><strong>POSH Agent:</strong> Anonymous harassment reporting and policy violation detection</li>
+                <li><strong>Shift Safety Agent:</strong> Night shift buddy system and transport coordination</li>
+                <li><strong>Maternity Agent:</strong> Return-to-work planning and phase-based transition guidance</li>
+                <li><strong>Meal Planner Agent:</strong> Nutritional planning and grocery management</li>
+                <li><strong>Policy Checker:</strong> Document verification and compliance monitoring</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Executive Summary & Goals -->
+    <section id="requirements">
+        <div class="section-header reveal">
+            <div class="section-number">07</div>
+            <h2 class="section-title">Executive Summary & Goals</h2>
+            <p class="section-subtitle">Core objectives and system capabilities</p>
+        </div>
+
+        <div class="content-box reveal">
+            <p>STHENIA enables employees to request arrangements such as work from home, shift changes, and caregiving support with AI-guided assistance.</p>
+            <ul>
+                <li>Enable employees to submit flexible work requests quickly and clearly</li>
+                <li>Improve request quality via AI guidance and professionally formatted justifications</li>
+                <li>Ensure routing, approvals, and escalations follow defined policy and hierarchy rules</li>
+                <li>Increase consistency and fairness across teams through standardized criteria</li>
+            </ul>
+            
+            <div class="highlight-box">
+                <h4>Agent System Support Capabilities:</h4>
+                <ul style="margin-top: 0.5rem;">
+                    <li><strong>Mental Health & Wellbeing:</strong> Counselling sessions, burnout detection, wellbeing check-ins, and crisis intervention</li>
+                    <li><strong>Personal Life Management:</strong> Meal planning, grocery reminders, daily todos, and alarm management</li>
+                    <li><strong>Workplace Safety:</strong> Shift safety monitoring, night shift buddy system, and transport coordination</li>
+                    <li><strong>Career Development:</strong> Learning modules, micro-learning sessions, and professional growth tracking</li>
+                    <li><strong>Policy & Compliance:</strong> POSH reporting, policy document verification, and audit trail maintenance</li>
+                    <li><strong>Maternity Support:</strong> Return-to-work planning, AI-generated tips, and phase-based transition guidance</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security & Features -->
+    <section id="security" style="background: linear-gradient(180deg, var(--purple-deep) 0%, rgba(45, 27, 78, 0.8) 100%);">
+        <div class="section-header reveal">
+            <div class="section-number">08</div>
+            <h2 class="section-title">Security & Deployment</h2>
+            <p class="section-subtitle">Enterprise-grade security with future-ready architecture</p>
+        </div>
+
+        <div class="arch-grid reveal">
+            <div class="arch-card" style="border-color: rgba(212, 175, 55, 0.3);">
+                <h3 style="color: var(--gold);">Security Architecture</h3>
+                <ul>
+                    <li>Role-Based Access Control (RBAC)</li>
+                    <li>Employee, Supervisor, HR, Admin roles</li>
+                    <li>AES-256 encryption for sensitive fields</li>
+                    <li>bcrypt password hashing</li>
+                    <li>Signed tokens via HS256 JWT</li>
+                </ul>
+            </div>
+            <div class="arch-card" style="border-color: rgba(56, 189, 248, 0.3);">
+                <h3>Future Enhancements</h3>
+                <ul>
+                    <li>PostgreSQL migration for scale</li>
+                    <li>Docker containerization</li>
+                    <li>Load balancing & auto-scaling</li>
+                    <li>WebSocket real-time notifications</li>
+                    <li>React Native mobile app</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="section-header reveal">
+            <div class="section-number">09</div>
+            <h2 class="section-title">Key Features</h2>
+            <p class="section-subtitle">Everything you need to protect your inner fortitude</p>
+        </div>
+
+        <div class="features-grid reveal">
+            <div class="feature-item">
+                <div class="feature-check">✓</div>
+                <div class="feature-text">AI-Powered Shift Management with Safety Scoring</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-check">✓</div>
+                <div class="feature-text">Maternity Rights & Leave Tracking</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-check">✓</div>
+                <div class="feature-text">Anonymous Harassment Reporting</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-check">✓</div>
+                <div class="feature-text">Burnout Prediction & Prevention</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-check">✓</div>
+                <div class="feature-text">Personalized Learning Paths</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-check">✓</div>
+                <div class="feature-text">Smart Meal Planning & Nutrition</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-check">✓</div>
+                <div class="feature-text">Wellbeing Analytics Dashboard</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-check">✓</div>
+                <div class="feature-text">Policy-Aware Request Approvals</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <h2 class="cta-title reveal">Ready to Unleash Your Power?</h2>
+        <p class="cta-subtitle reveal">STHENIA — The engine that protects your strength</p>
+        <a href="#" class="cta-button reveal">Explore the Application</a>
+    </section>
+
+    <footer>
+        <p>© 2024 STHENIA — Derived from Greek ΣΘΕΝΟΣ (Sthenos) — Inherent Strength</p>
+        <p style="margin-top: 0.5rem; font-size: 0.7rem;">AI-Assisted Flexible Work & Life Balance System</p>
+    </footer>
+
+    <script>
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Reveal on scroll
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealOnScroll = () => {
+            const windowHeight = window.innerHeight;
+            const elementVisible = 150;
+
+            revealElements.forEach((reveal) => {
+                const elementTop = reveal.getBoundingClientRect().top;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveal.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Initial check
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Parallax effect for shapes
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.shape');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 20;
+                shape.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
