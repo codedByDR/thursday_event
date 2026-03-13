@@ -1,0 +1,276 @@
+# AI Agent Implementation Prompt
+## Reusable Template — Based on "Nila" Workplace Request Management System
+
+Use this file as a blueprint to add AI agents, intelligent chat assistants, and voice interaction to **any web application**.
+
+**Source stack:**
+- Backend: FastAPI + SQLAlchemy + LangGraph + LangChain (DeepSeek / OpenAI)
+- Frontend: React + Vite + Tailwind CSS + framer-motion
+
+---
+
+## PROMPT — Copy and paste into GitHub Copilot Chat or any AI coding assistant:
+
+```
+I want to add an AI agent assistant to my [DESCRIBE YOUR APPLICATION] application.
+The backend uses [FastAPI / Django / Express] and the frontend uses [React / Vue / Angular].
+
+Please implement the following AI features, modelled after the "Nila" assistant pattern:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. LANGGRAPH AGENTIC WORKFLOW  (backend/agent/workflow.py)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Build a 4-node LangGraph StateGraph pipeline with the following nodes:
+
+  ┌─ Node 1: parse_intent ──────────────────────────────────────────────────────
+  │  • Call an LLM (DeepSeek or OpenAI) to analyse the user's free-text message.
+  │  • Detect intent from this list (replace with your domain intents):
+  │      ["create", "track", "approve", "general"]
+  │      e.g. for HR: ["apply_leave","check_payslip","raise_grievance","general"]
+  │  • Extract domain entities: item name, category, priority, date, etc.
+  │  • Detect language: "en" (English) or "ta" (Tamil) or "hi" (Hindi) — add your languages.
+  │  • Return ONLY a JSON object. Strip markdown code fences before json.loads().
+  │  • Fallback to keyword matching if the LLM call raises any exception.
+  └─────────────────────────────────────────────────────────────────────────────
+
+  ┌─ Node 2: policy ────────────────────────────────────────────────────────────
+  │  • Validate extracted entities against an allowed-values list.
+  │  • If invalid → set policy_valid=False and policy_message with reason.
+  │  • If valid   → set policy_valid=True.
+  └─────────────────────────────────────────────────────────────────────────────
+
+  ┌─ Node 3: execution ─────────────────────────────────────────────────────────
+  │  • Map intent to a UI navigation action string, e.g.:
+  │      "open_form", "open_list", "open_approvals", "general_response"
+  │  • Build a `prefill` dict with field values to pre-populate on the target page.
+  │  • Do NOT write to the database here — keep API endpoints responsible for writes.
+  └─────────────────────────────────────────────────────────────────────────────
+
+  ┌─ Node 4: output ────────────────────────────────────────────────────────────
+  │  • Generate a short, friendly response string in the user's detected language.
+  │  • Support English + at least one additional language (Tamil shown as example).
+  │  • If policy_valid=False, reply apologetically with the policy reason.
+  └─────────────────────────────────────────────────────────────────────────────
+
+AgentState TypedDict — customise field names to your domain:
+    user_input:      str
+    language:        str            # "en" | "ta" | "hi"
+    intent:          Optional[str]
+    request_data:    Optional[dict]
+    policy_valid:    Optional[bool]
+    policy_message:  Optional[str]
+    result:          Optional[dict]
+    response_text:   Optional[str]
+    user_id:         Optional[int]
+    user_role:       Optional[str]
+
+Graph wiring:
+    parse_intent → policy ──(valid)──► execution → output → END
+                          ──(invalid)──────────► output → END
+
+LLM configuration (environment variable for key — never hard-code):
+    # DeepSeek
+    model    = "deepseek-chat"
+    base_url = "https://api.deepseek.com/v1"
+    api_key  = os.getenv("DEEPSEEK_API_KEY", "sk-placeholder")
+    # OR OpenAI
+    model    = "gpt-4o-mini"
+    api_key  = os.getenv("OPENAI_API_KEY", "")
+
+    temperature = 0.1
+    max_tokens  = 512
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. FASTAPI AGENT ENDPOINT  (backend/main.py  +  backend/schemas.py)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Add to schemas.py:
+    class AgentRequest(BaseModel):
+        user_input: str
+        language: str = "en"
+
+    class AgentResponse(BaseModel):
+        intent: str
+        action: str
+        prefill: Optional[dict] = None
+        response_text: str
+        language: str
+
+Add to main.py:
+    @app.post("/api/agent", response_model=schemas.AgentResponse, tags=["Agent"])
+    def run_agent(
+        body: schemas.AgentRequest,
+        current_user: models.User = Depends(auth_utils.get_current_user),
+    ):
+        state = {
+            "user_input": body.user_input,
+            "language": body.language,
+            "intent": None, "request_data": None,
+            "policy_valid": None, "policy_message": None,
+            "result": None, "response_text": None,
+            "user_id": current_user.id,
+            "user_role": current_user.role,
+        }
+        result_state = agent_graph.invoke(state)
+        return schemas.AgentResponse(
+            intent        = result_state.get("intent", "general"),
+            action        = result_state.get("result", {}).get("action", "general_response"),
+            prefill       = result_state.get("result", {}).get("prefill"),
+            response_text = result_state.get("response_text", ""),
+            language      = result_state.get("language", "en"),
+        )
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. REACT FLOATING CHAT WIDGET  (frontend/src/components/[Name]/Widget.jsx)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Build a floating assistant chat widget that:
+  • Circular avatar button fixed to bottom-right (position: fixed, bottom-6, right-6).
+  • Click expands into a chat panel with scrollable message history.
+  • Separate bubble styles for "user" vs "assistant" messages.
+  • Input bar with text field + Send button (also handle Enter key).
+  • On send → POST /api/agent { user_input, language }.
+  • Handle returned action:
+      "open_form"      → navigate('/your-form', { state: prefill })
+      "open_list"      → navigate('/your-list')
+      "open_approvals" → navigate('/approvals')
+      "general_response" → display text only
+  • Loading spinner while awaiting API response.
+  • Error fallback message on API failure.
+  • Language toggle button (EN / TA or your supported languages).
+  • Use framer-motion for open/close panel animation.
+  • Optional: show "wake word detected!" toast when voice wake word fires.
+
+Key dependencies: framer-motion, lucide-react, react-router-dom, axios/fetch.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. ANIMATED SVG AVATAR  (frontend/src/components/[Name]/Avatar.jsx)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SVG-based animated avatar component (no external image, no copyright issues):
+  • Idle: gentle float  y: [0, -3, 0], loop, 3 s ease-in-out.
+  • Excited: scale + rotate bounce when wake word fires.
+  • Listening: pulsing glowing box-shadow.
+  • Eyes: blink animation every ~4 seconds (scaleY 1→0.1→1).
+  • Props: excited (bool), listening (bool), size ("sm" | "md" | "full").
+  • Gradient fill from your brand primary colour to secondary colour.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. VOICE HOOK — Web Speech API  (frontend/src/hooks/useVoice.js)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Custom React hook  useVoice({ onTranscript, onWakeWord })  that:
+  • Continuous SpeechRecognition with interimResults=true.
+  • Detects wake word "hi [assistant name]" → calls onWakeWord().
+  • On final speech → calls onTranscript(text).
+  • Exposes: { isListening, wakeDetected, transcript, supported, toggleListening, speak }
+  • speak(text, lang):
+      - Uses SpeechSynthesisUtterance.
+      - pitch: 1.4, rate: 1.0, volume: 1.0.
+      - Prefers female voice (matches: female|zira|samantha|karen|moira|tessa|fiona).
+      - lang="ta" → "ta-IN",  lang="en" → "en-US".
+  • Auto-restarts recognition on `onend` to stay continuous.
+  • Graceful degradation: if API unsupported, exposed `supported=false`.
+  • Cleanup on unmount.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. PYTHON DEPENDENCIES  (backend/requirements.txt)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Add or confirm these packages:
+    langgraph==0.2.28
+    langchain==0.3.7
+    langchain-openai==0.2.14
+    openai==1.59.2
+    httpx==0.25.2
+    python-dotenv==1.0.0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. ENVIRONMENT VARIABLES  (.env)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    DEEPSEEK_API_KEY=your_deepseek_api_key_here
+    # OR
+    OPENAI_API_KEY=your_openai_api_key_here
+
+    SECRET_KEY=your_jwt_secret
+    DATABASE_URL=sqlite:///./app.db   # or postgresql://...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. CUSTOMISATION CHECKLIST — Replace ALL of the following before using:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [ ] Assistant name:  "Nila"  →  "[Your Assistant Name]"
+  [ ] Intent list:     ["create","track","approve","general"]  →  your intents
+  [ ] Valid entities:  VALID_REQUEST_TYPES  →  your domain entities/categories
+  [ ] UI action names: "open_request_form","open_register"  →  your routes
+  [ ] Response strings: update English + language text inside output_node
+  [ ] Wake word:       "hi nila"  →  "hi [your assistant name]"
+  [ ] Avatar colours:  purple→pink gradient  →  your brand colours
+  [ ] LLM model:       "deepseek-chat"  →  "gpt-4o-mini" or preferred model
+  [ ] Language pair:   "en"/"ta"  →  your supported language codes
+  [ ] Route paths:     "/requests/new", "/register"  →  your app routes
+```
+
+---
+
+## SUPPORTED USE CASES — Drop-in Adaption Examples
+
+| Application          | Intent List                                                      |
+|----------------------|------------------------------------------------------------------|
+| HR Portal            | `apply_leave`, `check_payslip`, `raise_grievance`, `general`     |
+| IT Helpdesk          | `raise_ticket`, `check_ticket`, `escalate`, `general`            |
+| Inventory System     | `search_item`, `reorder`, `check_stock`, `general`               |
+| Hospital Reception   | `book_appointment`, `check_status`, `get_info`, `general`        |
+| E-Commerce           | `search_product`, `track_order`, `return`, `general`             |
+| Legal Case Manager   | `file_case`, `check_hearing`, `upload_doc`, `general`            |
+| School/University    | `enroll_course`, `check_grades`, `pay_fee`, `general`            |
+| Finance/Expense      | `submit_expense`, `check_reimbursement`, `view_budget`, `general`|
+
+---
+
+## ARCHITECTURE DIAGRAM
+
+```
+User types / speaks
+       │
+       ▼
+React Widget (useVoice hook)
+       │  POST /api/agent  { user_input, language }
+       ▼
+FastAPI endpoint  ← JWT-protected
+       │
+       ▼
+LangGraph agent_graph.invoke(state)
+  ├── Node 1: LLM parses intent + extracts entities
+  ├── Node 2: Policy validates entities
+  ├── Node 3: Execution builds UI action + prefill
+  └── Node 4: Output generates natural language response
+       │
+       │  { intent, action, prefill, response_text, language }
+       ▼
+React Widget
+  ├── Displays response text in chat bubble
+  ├── Navigates to correct page with prefill data
+  └── speak(response_text, language)  ← Web Speech API TTS
+```
+
+---
+
+## QUICK-START CHECKLIST
+
+1. Copy `backend/agent/workflow.py` into your project and adapt intents/entities.
+2. Add `/api/agent` POST endpoint to your FastAPI `main.py`.
+3. Add `AgentRequest` / `AgentResponse` Pydantic models to `schemas.py`.
+4. Copy `frontend/src/components/Nila/` to your project and rename the folder.
+5. Copy `frontend/src/hooks/useVoice.js` as-is (no changes needed).
+6. Set `DEEPSEEK_API_KEY` or `OPENAI_API_KEY` in your `.env`.
+7. Run `pip install langgraph langchain langchain-openai openai httpx python-dotenv`.
+8. Mount `<YourAssistantWidget />` inside your authenticated layout component.
+9. Done — the agent is live!
+
+---
+
+*Generated from the Nila — Workplace Request Management System.*  
+*Stack: FastAPI · LangGraph · LangChain · DeepSeek/OpenAI · React · Vite · Tailwind CSS · framer-motion*
