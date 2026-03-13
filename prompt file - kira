@@ -1,0 +1,1925 @@
+---
+name: MASTER_PROMPT_V1
+description: Describe when to use this prompt
+---
+
+<!-- Tip: Use /create-prompt in chat to generate content with agent assistance -->
+
+# STHENIA — AI-Powered Women Wellbeing, Safety & Work-Life Balance Platform
+## Master Development Prompt (Production-Grade)
+
+---
+
+## APPLICATION NAME
+
+**STHENIA** — *Strength, Tenacity, Health, Empowerment, Nurture, Intelligence, Advocacy*
+- Tagline: *"Your Strength. Your Wellbeing. Your Balance."*
+- Bot Name: **Kira** — *Knowledge-driven Intelligent Response Assistant*
+
+---
+
+## TECHNOLOGY STACK (FINAL DECISIONS)
+
+| Layer | Technology | Reason |
+|---|---|---|
+| Frontend | React 18 + TypeScript + Vite | Fast, typed, component-driven |
+| UI Library | Tailwind CSS + Shadcn/ui + Framer Motion | Gradient, animations, accessible |
+| State Mgmt | Zustand + React Query (TanStack) | Lightweight, async-friendly |
+| Backend | FastAPI (Python 3.11) | Async, fast, OpenAPI auto-docs |
+| AI Orchestration | LangGraph (stateful agent graph) | Best for multi-step workflows with state |
+| RAG | LangChain + ChromaDB (vector store) | Policy document retrieval |
+| LLM | DeepSeek-R1 via TCS GenAI Lab | Low token cost, reasoning model |
+| Auth | JWT + OAuth2 (FastAPI Security) + bcrypt | Secure, standard |
+| Database | SQLite 3 (SQLAlchemy ORM + Alembic) | Lightweight, zero-config, file-based, portable |
+| Email (SMTP) | FastAPI-Mail + SMTP (Custom Sender) | Notification triggers |
+| Email Sender | sthenia.noreply@gmail.com | Dedicated app email sender |
+| Logging | Loguru (backend) + Sentry SDK (frontend) | Structured logs both layers |
+| Accessibility | ARIA roles + axe-core + react-aria | WCAG 2.1 AA, blind user support |
+| Face Emotion | face-api.js (client-side, privacy-safe) | Detect sad/happy, no server upload |
+| Session Mgmt | Redis (TTL-based) + JWT refresh | Auto-logout at 10 min inactivity |
+| Notifications | Web Push API + SMTP email | Browser + email dual channel |
+| Tour | react-joyride | Guided app tour on first login |
+| Text-to-Speech | Web Speech API (SpeechSynthesis) | Kira voice, accessibility |
+| Speech Visual | Lottie animations (anime girl sprite) | Kira mouth/body animations |
+| Anime Avatar | Custom Lottie JSON (girl IT employee, crown) | Professional anime bot |
+
+---
+
+## THE PERFECT SYSTEM PROMPT
+
+Use this as your complete generation prompt for the entire application:
+
+---
+
+```
+You are a senior full-stack engineer and AI architect. Build a complete, production-grade web application called "STHENIA" — an AI-Powered Women Wellbeing, Safety & Work-Life Balance Platform for women employees. Apply every instruction below with zero omissions.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 1 — PROJECT IDENTITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Application name: STHENIA
+Tagline: "Your Strength. Your Wellbeing. Your Balance."
+Target users: Women employees, managers/supervisors, HR administrators
+AI assistant name: Kira (Knowledge-driven Intelligent Response Assistant)
+Kira persona: Professional anime girl IT employee, wearing a small crown, 
+  dressed in smart-casual work attire, expressive face, warm personality.
+  Speaks with empathy, professionalism, and gentle humor.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 2 — TECH STACK (NON-NEGOTIABLE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Frontend:
+- React 18 with TypeScript and Vite
+- Tailwind CSS with custom gradient theme (purple → pink → rose → soft gold)
+- Shadcn/ui components as base
+- Framer Motion for all transitions and Kira animations
+- Lottie React for Kira animated avatar (idle, talking, thinking, happy, sad-empathy states)
+- face-api.js for client-side facial emotion detection (enabled ONLY with valid justification
+  — see Part 14A for safeguards; no images leave browser)
+- react-joyride for guided application tour on first login
+- Web Speech API (SpeechSynthesis) for Kira voice output
+- Zustand for global state management
+- TanStack Query (React Query v5) for server state and caching
+- React Router v6 for navigation
+- react-aria from Adobe for WCAG 2.1 AA accessibility
+- axe-core integrated in development mode
+- Cursor hover speaks element labels via SpeechSynthesis (accessibility mode toggle)
+- Double-tap anywhere (or keyboard shortcut Alt+K) opens Kira chat panel instantly
+
+Backend:
+- FastAPI with Python 3.11, fully async
+- SQLAlchemy 2.0 (async ORM) + Alembic for migrations
+- SQLite 3 as the database (file-based, zero-config, lightweight via aiosqlite)
+- Redis for session management (TTL = 10 minutes inactivity)
+- JWT (access token 15 min, refresh token 7 days) + OAuth2PasswordBearer
+- bcrypt for password hashing
+- FastAPI-Mail with SMTP for email notifications (sender: sthenia.noreply@gmail.com)
+- Loguru for structured backend logging (JSON format, written to logs/backend.log)
+- CORS configured strictly to frontend origin only
+
+AI / Agent Layer:
+- LangGraph for the stateful multi-agent workflow (the correct choice for this use case)
+- LangChain for RAG (document loaders, text splitters, retrieval chain)
+- ChromaDB as the vector store for policy documents
+- LLM: DeepSeek-R1 via TCS GenAI Lab endpoint
+
+LLM configuration (use exactly):
+  LLM_API_KEY=sk-T4AaQhdHdumu_fBjjE5nyg
+  LLM_BASE_URL=https://genailab.tcs.in
+  LLM_MODEL=azure_ai/genailab-maas-DeepSeek-R1
+
+Token optimization strategy:
+- Use streaming responses to reduce perceived latency
+- Cache repeated policy lookups in Redis (TTL 1 hour)
+- Compress conversation history: keep last 4 exchanges + system summary
+- Use RAG retrieval (top 3 chunks, max 400 tokens each) instead of stuffing full policy docs
+- Write precise, minimal system prompts (under 300 tokens)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 3 — FOLDER STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sthenia/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── kira/           # Kira avatar, speech bubble, emotion display
+│   │   │   ├── dashboard/      # Analytics, charts, tracking widgets
+│   │   │   ├── requests/       # Request form, wizard, status tracker
+│   │   │   ├── approvals/      # Manager approval workflow UI
+│   │   │   ├── auth/           # Login, register, forgot password
+│   │   │   ├── accessibility/  # Screen reader helpers, voice cursor
+│   │   │   ├── wellbeing/      # Employee health tracker, water, steps, energy
+│   │   │   ├── counselling/    # Emotional/physical counselling UI
+│   │   │   ├── harassment/     # Anonymous POSH reporting UI
+│   │   │   ├── assistants/     # Meal planner, grocery, alarm, todo UIs
+│   │   │   ├── shift/          # Safety-aware shift scheduling UI
+│   │   │   ├── learning/       # Micro-learning modules UI
+│   │   │   ├── return-to-work/ # Maternity return-to-work support UI
+│   │   │   └── shared/         # Buttons, modals, notifications, tour
+│   │   ├── pages/
+│   │   ├── store/              # Zustand stores
+│   │   ├── hooks/              # Custom hooks
+│   │   ├── services/           # API client (axios)
+│   │   ├── types/              # TypeScript interfaces
+│   │   └── assets/             # Lottie JSONs, icons
+│   └── public/
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── routes/         # auth, requests, approvals, users, analytics,
+│   │   │   │                   # wellbeing, harassment, counselling, assistants,
+│   │   │   │                   # shift, learning, policy_admin
+│   │   │   └── dependencies.py
+│   │   ├── agent/
+│   │   │   ├── graph.py        # LangGraph state machine
+│   │   │   ├── nodes/          # Each agent node (intake, justify, counsel, etc.)
+│   │   │   ├── agents/         # Multi-agent: counselling, burnout, POSH, meal, etc.
+│   │   │   ├── prompts/        # All LLM prompts (versioned)
+│   │   │   └── rag/            # ChromaDB setup, document ingestion, policy checker
+│   │   ├── models/             # SQLAlchemy ORM models
+│   │   ├── schemas/            # Pydantic schemas
+│   │   ├── services/           # Business logic
+│   │   ├── core/               # config, security, logging
+│   │   ├── db/                 # session, migrations
+│   │   └── main.py
+│   ├── data/
+│   │   ├── sthenia.db          # SQLite database file
+│   │   ├── chroma/             # ChromaDB vector store
+│   │   └── policies/           # Uploaded policy documents (PDF/TXT)
+│   ├── logs/
+│   │   └── backend.log
+│   ├── alembic/
+│   └── requirements.txt
+├── docs/
+│   ├── FRD.md
+│   ├── Architecture.md
+│   ├── DataModel/
+│   ├── UIWireframes/
+│   ├── TestScripts.csv
+│   ├── TraceabilityMatrix.csv
+│   └── UserManual.md
+└── agent_code_checker/         # Deliverable 9: Code Quality Checker agent
+    ├── app.py                  # Gradio/Streamlit UI
+    ├── agent.py
+    └── checklist_template.csv
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 4 — DATABASE DESIGN (SQLite 3)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Database file: data/sthenia.db (SQLite 3, file-based, zero-config)
+NOTE: SQLite uses TEXT for UUIDs, TEXT with CHECK constraints for enums,
+      and JSON (TEXT) instead of JSONB. Use WAL mode for concurrent reads.
+
+Create these tables with all proper foreign keys, indexes, and audit columns 
+(created_at, updated_at, created_by, is_deleted):
+
+1. users
+   - user_id (TEXT PK, UUID format)
+   - employee_id (TEXT UNIQUE)
+   - full_name, email (TEXT UNIQUE), password_hash
+   - role (TEXT CHECK: employee, supervisor, hr, admin)
+   - department, designation, reporting_supervisor_id (FK self)
+   - tagged_hr_id (FK users)
+   - gender (TEXT CHECK: female, male, other, prefer_not_to_say)
+   - is_active, is_verified
+   - last_login, failed_login_attempts, locked_until
+   - maternity_leave_start, maternity_leave_end (DATE, nullable)
+   - return_to_work_date (DATE, nullable)
+   - shift_preference (TEXT, nullable)
+
+2. flexible_requests
+   - request_id (TEXT PK, UUID format)
+   - employee_id (FK users)
+   - request_type (TEXT CHECK: wfh, shift_change, caregiving_support, 
+             emergency_flexibility, maternity_return, safety_concern,
+             harassment_report, counselling, burnout_flag, other)
+   - title, informal_description (TEXT)
+   - ai_formal_description (TEXT — Kira-converted formal version of input)
+   - ai_generated_justification (TEXT)
+   - status (TEXT CHECK: draft, submitted, under_review, supervisor_approved, 
+             hr_under_review, approved, rejected, auto_closed, withdrawn,
+             auto_approved)
+   - urgency_level (TEXT CHECK: low, medium, high, emergency)
+   - is_emergency (BOOLEAN DEFAULT 0)
+   - supporting_document_path (TEXT, nullable — for emergency uploads)
+   - document_verified_by_rag (BOOLEAN DEFAULT 0 — RAG policy verification result)
+   - auto_approval_eligible (BOOLEAN DEFAULT 0)
+   - auto_approval_deadline (DATETIME, nullable — submitted + 1-2 days for emergency)
+   - requested_start_date, requested_end_date
+   - turnaround_deadline (auto = submitted_at + 7 days, or +2 days if emergency)
+   - submitted_at, auto_close_at
+   - is_anonymous (BOOLEAN DEFAULT 0 — for harassment reports)
+
+3. request_policies (many-to-many)
+   - id (TEXT PK), request_id (FK), policy_id (FK)
+
+4. policies
+   - policy_id (TEXT PK, UUID format)
+   - policy_code, title, description (TEXT)
+   - category (TEXT CHECK: general, flexibility, safety, posh, maternity,
+               wellbeing, emergency, shift, harassment)
+   - version (INTEGER), effective_date
+   - document_path (TEXT — for RAG ingestion)
+   - is_active (BOOLEAN DEFAULT 1)
+   - uploaded_by (FK users — admin only)
+   - uploaded_at, last_updated_at
+
+5. approvals
+   - approval_id (TEXT PK, UUID format)
+   - request_id (FK)
+   - approver_id (FK users)
+   - stage (TEXT CHECK: supervisor, hr)
+   - decision (TEXT CHECK: pending, approved, rejected, delegated, auto_approved)
+   - comments (TEXT)
+   - decided_at
+   - reminder_sent_count, last_reminder_at
+   - auto_approved (BOOLEAN DEFAULT 0 — set when auto-approval triggers)
+
+6. notifications
+   - notification_id (TEXT PK, UUID format)
+   - user_id (FK), request_id (FK)
+   - channel (TEXT CHECK: email, push, in_app)
+   - type (TEXT CHECK: submission_confirm, approval_request, approved, rejected, 
+           reminder, auto_close_warning, kira_insight, emergency_auto_approved,
+           burnout_alert, harassment_report, counselling_session, 
+           shift_safety_alert, maternity_return_support)
+   - subject, body (TEXT)
+   - is_read, sent_at, read_at
+
+7. audit_logs
+   - log_id (TEXT PK, UUID format)
+   - user_id (FK), action, entity_type, entity_id
+   - old_value (TEXT JSON), new_value (TEXT JSON)
+   - ip_address, user_agent, timestamp
+
+8. kira_sessions
+   - session_id (TEXT PK, UUID format)
+   - user_id (FK)
+   - agent_type (TEXT CHECK: general, counselling, burnout, posh, meal_planner,
+                 grocery, alarm, todo, justification, shift_safety)
+   - conversation_history (TEXT JSON)
+   - context_summary (TEXT)
+   - last_active, created_at
+
+9. analytics_snapshots
+   - snapshot_id (TEXT PK), period (TEXT month), department
+   - total_requests, approved_count, rejected_count, auto_closed_count
+   - auto_approved_count, emergency_count
+   - avg_turnaround_days, wfh_count, shift_count, caregiving_count
+   - burnout_flags_count, harassment_reports_count
+   - work_life_balance_score (REAL — aggregate score)
+   - generated_at
+
+10. user_sessions (Redis-backed but also persisted for audit)
+    - session_token (TEXT PK, UUID), user_id (FK)
+    - created_at, expires_at, ip_address, is_revoked
+
+11. harassment_reports (ANONYMOUS — separate from flexible_requests for privacy)
+    - report_id (TEXT PK, UUID format)
+    - reporter_hash (TEXT — hashed employee identity, NOT directly linkable)
+    - report_details (TEXT — encrypted at rest)
+    - incident_date, incident_location (TEXT)
+    - involved_parties (TEXT — names/descriptions, encrypted)
+    - severity (TEXT CHECK: low, medium, high, critical)
+    - status (TEXT CHECK: submitted, under_investigation, resolved, escalated)
+    - assigned_hr_id (FK users — ONLY HR can see full details)
+    - resolution_notes (TEXT, nullable, encrypted)
+    - is_posh_applicable (BOOLEAN DEFAULT 1)
+    - created_at, updated_at
+    NOTE: No direct FK to users table to preserve anonymity.
+          Only HR with role='hr' can access this table.
+          All queries require HR authentication check.
+
+12. burnout_indicators
+    - indicator_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - detection_date (DATE)
+    - stressful_language_score (REAL 0-1 — NLP analysis of messages)
+    - late_work_hours_count (INTEGER — # of late logins in past 30 days)
+    - rejected_requests_count (INTEGER — # of rejected flexibility requests)
+    - overall_burnout_risk (TEXT CHECK: low, moderate, high, critical)
+    - ai_recommendation (TEXT — Kira's suggested intervention)
+    - is_acknowledged (BOOLEAN DEFAULT 0)
+    - acknowledged_by (FK users, nullable — HR or supervisor)
+    - created_at
+
+13. shift_schedules
+    - schedule_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - shift_date (DATE)
+    - shift_start (TEXT time), shift_end (TEXT time)
+    - shift_type (TEXT CHECK: morning, afternoon, evening, night, flexible)
+    - is_safe_for_women (BOOLEAN DEFAULT 1 — safety evaluation result)
+    - safety_score (REAL 0-100)
+    - safety_notes (TEXT — AI-generated safety assessment)
+    - transport_arranged (BOOLEAN DEFAULT 0)
+    - buddy_assigned_id (FK users, nullable — safety buddy for late shifts)
+    - approved_by (FK users, nullable)
+    - created_at, updated_at
+
+14. maternity_return_plans
+    - plan_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - leave_start_date, leave_end_date, planned_return_date
+    - phased_return (BOOLEAN DEFAULT 1 — gradual workload increase)
+    - phase_1_hours (REAL — first 2 weeks), phase_2_hours (REAL — weeks 3-4)
+    - full_hours_from (DATE — when full workload resumes)
+    - mentor_id (FK users, nullable — assigned return mentor)
+    - support_needs (TEXT JSON — list of support requirements)
+    - micro_learning_assigned (TEXT JSON — courses for skill refresh)
+    - status (TEXT CHECK: planned, active, completed)
+    - created_at, updated_at
+
+15. micro_learning_modules
+    - module_id (TEXT PK, UUID format)
+    - title, description (TEXT)
+    - category (TEXT CHECK: skill_refresh, wellbeing, safety, posh_awareness,
+                stress_management, leadership, technical, policy)
+    - content_url (TEXT), duration_minutes (INTEGER)
+    - difficulty (TEXT CHECK: beginner, intermediate, advanced)
+    - is_active (BOOLEAN DEFAULT 1)
+    - created_at
+
+16. employee_learning_progress
+    - progress_id (TEXT PK), employee_id (FK users), module_id (FK micro_learning_modules)
+    - status (TEXT CHECK: not_started, in_progress, completed)
+    - started_at, completed_at, score (REAL, nullable)
+
+17. wellbeing_tracker (Employee Personal Health Dashboard data)
+    - tracker_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - date (DATE)
+    - water_intake_ml (INTEGER DEFAULT 0)
+    - steps_count (INTEGER DEFAULT 0)
+    - sleep_hours (REAL DEFAULT 0)
+    - mood_score (INTEGER CHECK 1-10)
+    - energy_level (INTEGER CHECK 1-10)
+    - physical_health_pct (REAL 0-100 — self-reported or calculated)
+    - mental_health_pct (REAL 0-100 — self-reported or AI-assessed)
+    - stress_level (INTEGER CHECK 1-10)
+    - exercise_minutes (INTEGER DEFAULT 0)
+    - notes (TEXT, nullable)
+    - created_at
+
+18. meal_plans
+    - plan_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - date (DATE)
+    - meal_type (TEXT CHECK: breakfast, lunch, dinner, snack)
+    - meal_name (TEXT), ingredients (TEXT JSON)
+    - calories (INTEGER), is_vegetarian (BOOLEAN)
+    - ai_suggested (BOOLEAN DEFAULT 1)
+    - created_at
+
+19. grocery_reminders
+    - reminder_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - item_name (TEXT), quantity (TEXT)
+    - category (TEXT CHECK: vegetables, fruits, dairy, grains, protein, other)
+    - is_purchased (BOOLEAN DEFAULT 0)
+    - due_date (DATE, nullable)
+    - recurrence (TEXT CHECK: none, daily, weekly, monthly)
+    - created_at
+
+20. alarms_reminders
+    - alarm_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - title (TEXT), description (TEXT, nullable)
+    - alarm_type (TEXT CHECK: alarm, reminder, medication, water, break, meeting)
+    - trigger_time (TEXT datetime)
+    - recurrence (TEXT CHECK: none, daily, weekdays, weekly, monthly)
+    - is_active (BOOLEAN DEFAULT 1)
+    - is_snoozed (BOOLEAN DEFAULT 0)
+    - created_at
+
+21. daily_todos
+    - todo_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - title (TEXT), description (TEXT, nullable)
+    - category (TEXT CHECK: work, personal, health, family, errands)
+    - priority (TEXT CHECK: low, medium, high, urgent)
+    - due_date (DATE, nullable)
+    - is_completed (BOOLEAN DEFAULT 0)
+    - completed_at (DATETIME, nullable)
+    - created_at, updated_at
+
+22. counselling_sessions
+    - session_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - session_type (TEXT CHECK: emotional, physical, mental, stress, grief,
+                    workplace_conflict, personal, anxiety, depression_screening)
+    - ai_agent_used (TEXT — which counselling agent handled this)
+    - session_summary (TEXT — AI-generated summary, encrypted)
+    - mood_before (INTEGER 1-10), mood_after (INTEGER 1-10)
+    - is_escalated_to_human (BOOLEAN DEFAULT 0)
+    - escalation_reason (TEXT, nullable)
+    - session_duration_minutes (INTEGER)
+    - created_at
+
+23. posh_analysis_logs
+    - analysis_id (TEXT PK, UUID format)
+    - report_id (FK harassment_reports, nullable)
+    - analysis_type (TEXT CHECK: pattern_detection, severity_assessment,
+                     policy_compliance, trend_analysis)
+    - ai_findings (TEXT JSON)
+    - recommendations (TEXT)
+    - analyzed_at
+
+24. work_life_balance_scores
+    - score_id (TEXT PK, UUID format)
+    - employee_id (FK users)
+    - period (TEXT — YYYY-MM)
+    - flexibility_score (REAL 0-100)
+    - wellbeing_score (REAL 0-100)
+    - workload_score (REAL 0-100)
+    - satisfaction_score (REAL 0-100)
+    - overall_wlb_score (REAL 0-100)
+    - ai_insights (TEXT)
+    - calculated_at
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 5 — AI MULTI-AGENT ARCHITECTURE (LangGraph)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHY LANGGRAPH over plain LangChain:
+LangGraph is a stateful, graph-based orchestration framework. 
+For this use case it is superior because:
+- Requests go through multiple sequential + conditional stages (intake → justify → tag → route)
+- Each stage needs shared state (the STHENIA RequestState)
+- Easy to add human-in-the-loop checkpoints (supervisor review)
+- Native support for retries, branching, and cycles without spaghetti code
+- Supports MULTIPLE SPECIALIZED AGENTS for different support categories
+
+MULTI-AGENT SYSTEM DESIGN:
+STHENIA uses a hub-and-spoke agent model where Kira acts as the central
+orchestrator (hub) that routes to specialized agents (spokes) based on
+the user's intent.
+
+SPECIALIZED AGENTS (each runs in its own LangGraph sub-graph):
+
+A. REQUEST AGENT — Handles all flexible work request workflows
+B. JUSTIFICATION GENERATOR AGENT — Converts informal → formal, generates justifications
+C. COUNSELLING AGENT (Emotional & Mental Support) — Empathetic AI counsellor
+D. BURNOUT DETECTION AGENT — Monitors stress indicators and triggers alerts
+E. POSH / HARASSMENT AGENT — Anonymous reporting, POSH compliance analysis
+F. SHIFT SAFETY AGENT — Evaluates shift safety for women employees
+G. MATERNITY RETURN AGENT — Smart return-to-work after maternity leave
+H. MEAL PLANNER AGENT — AI-powered meal planning and nutrition
+I. GROCERY REMINDER AGENT — Grocery list and reminder management
+J. ALARM & REMINDER AGENT — Personal alarm and reminder assistant
+K. DAILY TODO AGENT — Responsibility and task management
+L. WELLBEING TRACKER AGENT — Health tracking, water, steps, energy
+M. MICRO LEARNING AGENT — Learning module recommendations and progress
+N. POLICY CHECKER AGENT — RAG-based policy document verification for auto-approval
+
+MASTER AGENT GRAPH — REQUEST WORKFLOW:
+
+State Schema (TypedDict):
+{
+  user_id: str,
+  employee_context: dict,        # role, dept, history
+  raw_input: str,                # employee's casual text
+  formal_input: str,             # Kira-converted formal version
+  request_type: str,
+  urgency: str,
+  is_emergency: bool,
+  ai_justification: str,
+  matched_policies: list[dict],
+  rag_context: str,
+  approval_route: list[str],     # [supervisor_id, hr_id]
+  current_stage: str,
+  conversation_history: list,
+  emotion_context: str,          # from face-api.js (if enabled with justification)
+  supporting_document: str,      # file path for emergency docs
+  document_rag_verified: bool,   # RAG verification result
+  auto_approval_eligible: bool,
+  token_usage: dict
+}
+
+NODES (each is an async Python function):
+
+1. intake_node
+   - Receives raw employee input + emotion_context (if enabled)
+   - Classifies request_type with minimal LLM call (structured output, max 100 tokens)
+   - Extracts: type, urgency, dates, key points
+   - Prompt: "Classify and extract. Return JSON only. Input: {raw_input}"
+
+2. informal_to_formal_node (JUSTIFICATION GENERATOR AGENT)
+   - Converts the employee's informal/casual message into formal, professional language
+   - Stores the formal version in state.formal_input
+   - This conversion happens BEFORE raising any request
+   - System prompt: "Convert this informal employee message into clear, professional,
+     formal language suitable for an official request. Preserve all key details.
+     Do not add information not in the original. Max 150 words."
+   - Token budget: ~200 tokens
+
+3. rag_retrieval_node  
+   - Queries ChromaDB with semantic search for top-3 relevant policy chunks
+   - No LLM call — pure vector similarity
+   - Injects retrieved context into state.rag_context
+
+4. justification_node
+   - Generates professional AI justification using RAG context + formal_input
+   - System prompt (< 250 tokens):
+     "You are Kira, STHENIA's assistant. Convert the employee's request 
+      into a professional justification. Reference the policies provided. 
+      Be empathetic, concise, and formal. Max 200 words."
+   - Uses streaming for UX responsiveness
+   - Token budget: ~400 tokens total (prompt + completion)
+
+5. policy_tagging_node
+   - Maps matched policy chunks to policy_ids in DB
+   - Pure DB lookup — zero LLM tokens
+
+6. document_verification_node (for EMERGENCY requests with uploaded documents)
+   - Uses RAG to compare uploaded document against policy requirements
+   - Extracts text from uploaded PDF/image (via OCR if needed)
+   - Queries ChromaDB for matching policy requirements
+   - LLM evaluates: "Does this document satisfy the policy requirements for
+     an emergency {request_type} request? Return: valid/invalid with reason."
+   - Sets state.document_rag_verified = True/False
+   - If valid + emergency → state.auto_approval_eligible = True
+   - Token budget: ~300 tokens
+
+7. emotion_response_node (enabled ONLY with valid justification — see Part 14A)
+   - If emotion_context == "sad" or "stressed":
+     Generate a warm supportive message from Kira (max 60 tokens)
+     "Respond with 1 kind, empathetic sentence to a stressed employee. Be warm."
+   - Else: skip (no LLM call)
+
+8. approval_routing_node
+   - Pure logic node — no LLM
+   - Looks up employee.reporting_supervisor_id and employee.tagged_hr_id
+   - Sets state.approval_route
+   - For normal requests: turnaround_deadline = now + 7 days
+   - For emergency requests with valid docs: auto_approval_deadline = now + 2 days
+   - If auto_approval_eligible: sets auto-approval timer
+
+9. notification_node
+   - Triggers email via FastAPI-Mail (from: sthenia.noreply@gmail.com) to:
+     * employee (confirmation)
+     * supervisor (action required — includes urgency level)
+     * For emergency: adds "URGENT" prefix, shorter SLA notice
+   - Pure service call — zero LLM tokens
+
+10. supervisor_decision_node (human-in-the-loop checkpoint)
+    - LangGraph interrupt — waits for supervisor HTTP callback
+    - On approval: triggers HR notification
+    - On rejection: triggers employee notification with reason
+    - If auto_approval_eligible AND no decision within deadline → auto_approve
+
+11. hr_decision_node (human-in-the-loop checkpoint)
+    - Same pattern as supervisor node
+    - On approval: final approval email to employee
+    - On rejection: rejection email with feedback
+    - If auto_approval_eligible AND no decision within deadline → auto_approve
+
+12. auto_approval_node
+    - Triggered when emergency request with valid document has no response in 1-2 days
+    - Verifies: document_rag_verified == True AND is_emergency == True
+    - Sets status = 'auto_approved', creates approval record with auto_approved = True
+    - Sends notification to employee, manager, HR about auto-approval
+    - Logs detailed audit trail
+
+13. outcome_analytics_node
+    - On any terminal state (approved/rejected/auto_closed/auto_approved)
+    - Updates analytics_snapshots table
+    - Updates work_life_balance_scores
+    - Pure DB write — zero LLM tokens
+
+EDGES:
+intake → informal_to_formal → rag_retrieval → justification → policy_tagging → 
+document_verification (conditional: if emergency + document) →
+emotion_check (conditional, if enabled) → approval_routing → notification →
+[wait: supervisor_decision | auto_approval_timer] → 
+[wait: hr_decision | auto_approval_timer] → outcome_analytics
+
+CONDITIONAL EDGES:
+- After intake: if emergency + has document → document_verification_node
+- After emotion_check: if sad/stressed → emotion_response_node → continue; else skip
+- After supervisor_decision: approved → hr_decision; rejected → outcome_analytics
+- Auto-approval edge: if auto_approval_deadline reached + document_verified → auto_approval_node
+- Auto-close edge: scheduled job checks turnaround_deadline daily
+
+TOKEN BUDGET PER REQUEST LIFECYCLE: ~800-1200 tokens total (still very efficient)
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+PART 5A — SPECIALIZED AGENTS (Sub-Graphs)
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+AGENT B: JUSTIFICATION GENERATOR AGENT
+Purpose: Convert informal, casual employee messages into formal, professional language.
+         Also generates policy-aligned justifications.
+Workflow:
+1. Receive raw informal text from employee
+2. Detect language tone (casual, semi-formal, formal)
+3. If casual/semi-formal → rewrite to formal professional tone
+4. Show side-by-side comparison to employee: "Here's your message, professionally rephrased"
+5. Employee confirms → formal version used for the request
+System prompt: "You are a professional language assistant. Convert informal workplace
+  messages into clear, formal, professional language. Maintain all factual content.
+  Do not add or remove information. Use respectful, corporate-appropriate tone."
+Token budget per conversion: ~200 tokens
+
+AGENT C: COUNSELLING AGENT (Emotional & Mental Support)
+Purpose: Provide empathetic AI-based emotional and mental health support.
+Sub-types (each with tailored prompts):
+  - Emotional Support Agent: For stress, anxiety, sadness, overwhelm
+  - Mental Wellness Agent: Mindfulness exercises, breathing techniques, grounding
+  - Workplace Conflict Agent: Advice on handling workplace interpersonal issues
+  - Grief Support Agent: Compassionate support for loss and bereavement
+  - Anxiety Management Agent: CBT-based techniques, worry journaling
+  - Depression Screening Agent: PHQ-9 style screening (refers to professional if needed)
+Safety: Always includes disclaimer — "I'm an AI assistant, not a licensed therapist. 
+  If you're in crisis, please contact [emergency helpline numbers]."
+Escalation: If crisis keywords detected (self-harm, suicide) → immediately show
+  emergency helpline numbers + offer to connect with HR confidentially.
+Session tracking: Each counselling session saved to counselling_sessions table.
+
+AGENT D: BURNOUT DETECTION AGENT
+Purpose: Proactively detect employee burnout risk.
+Inputs monitored (with employee consent):
+1. Stressful language in messages — NLP sentiment analysis on request descriptions
+   (keywords: "exhausted", "overwhelmed", "can't cope", "breaking point", etc.)
+2. Frequent late work hours — login/activity timestamps showing work after 8PM
+3. Multiple rejected flexibility requests — pattern of denied WFH/shift change requests
+4. Declining wellbeing scores — from wellbeing_tracker data
+Scoring:
+  - Each indicator scored 0-1
+  - Weighted average: language(0.3) + late_hours(0.25) + rejections(0.25) + wellbeing(0.2)
+  - Risk levels: Low (<0.3), Moderate (0.3-0.5), High (0.5-0.7), Critical (>0.7)
+Actions:
+  - Moderate: Kira gently suggests break, wellbeing resources
+  - High: Kira recommends counselling session, notifies HR (anonymized)
+  - Critical: Alert HR + supervisor with recommended interventions
+
+AGENT E: POSH / HARASSMENT AGENT (Anonymous)
+Purpose: Safe, anonymous reporting of workplace harassment per POSH Act compliance.
+Workflow:
+1. Employee selects "Report Harassment" → enters anonymous mode
+2. NO identifying information stored — reporter_hash generated from salted hash
+3. Employee describes incident through guided questions (Kira asks sensitively)
+4. Details stored in harassment_reports table (encrypted at rest)
+5. ONLY assigned HR personnel can view report details
+6. AI analyzes for POSH Act applicability and severity
+7. POSH analysis stored in posh_analysis_logs
+Privacy guarantees:
+  - No user_id stored in harassment_reports — only reporter_hash
+  - Manager CANNOT see reports — HR only
+  - All detail fields encrypted using AES-256
+  - Audit logs for harassment table access (who viewed, when)
+  - Anonymous report ID provided to reporter for status tracking
+
+AGENT F: SHIFT SAFETY AGENT
+Purpose: Evaluate shift schedules to ensure safety for women employees.
+Safety evaluation criteria:
+1. Late night shifts (after 8PM) — flag, require transport arrangement
+2. Isolated location shifts — require buddy system
+3. Commute safety based on shift end time
+4. Consecutive night shifts — fatigue risk
+5. Lone working scenarios — must have check-in protocol
+Actions:
+  - Score each shift 0-100 for safety
+  - Shifts scoring < 60: auto-flag, require manager justification
+  - Shifts scoring < 40: block unless transport + buddy arranged
+  - Generate safety notes and recommendations
+  - Suggest alternative shift arrangements if unsafe
+
+AGENT G: MATERNITY RETURN AGENT (Smart Return-to-Work Support)
+Purpose: Support women returning to work after maternity leave.
+Features:
+1. Phased return plan — gradual increase in work hours over 4-6 weeks
+2. Mentor assignment — pair with experienced colleague
+3. Micro-learning module recommendations — refresh skills missed during leave
+4. Flexible schedule builder — accommodate new parent needs
+5. Regular check-in prompts — Kira asks "How are you settling back in?"
+6. Childcare support info — company policies, nearby facilities
+7. Lactation break scheduling — if applicable
+
+AGENT H: MEAL PLANNER AGENT
+Purpose: AI-powered meal planning for employee wellbeing.
+Features:
+1. Suggest meals based on dietary preferences (veg/non-veg/vegan)
+2. Consider calorie goals, allergies, health conditions
+3. Plan breakfast, lunch, dinner, snacks for the week
+4. Generate grocery lists from meal plans (feeds into Grocery Agent)
+5. Store meal history for preference learning
+
+AGENT I: GROCERY REMINDER AGENT
+Purpose: Manage grocery shopping lists and reminders.
+Features:
+1. Add items manually or auto-generate from meal plans
+2. Categorize items (vegetables, fruits, dairy, etc.)
+3. Set purchase reminders with recurrence
+4. Mark items as purchased
+5. Suggest items based on meal plan and past purchases
+
+AGENT J: ALARM & REMINDER AGENT
+Purpose: Personal alarm and reminder management.
+Features:
+1. Set alarms for any time (one-time or recurring)
+2. Reminder types: medication, water intake, break time, meetings
+3. Snooze functionality
+4. Daily schedule view with all upcoming reminders
+5. Smart reminders — Kira reminds based on wellbeing data
+   (e.g., "You haven't logged water in 3 hours")
+
+AGENT K: DAILY TODO AGENT
+Purpose: Daily responsibility and task management assistant.
+Features:
+1. Create, edit, delete todos with categories and priorities
+2. Categories: work, personal, health, family, errands
+3. Priority levels: low, medium, high, urgent
+4. Due date tracking with overdue alerts
+5. Daily summary: "Good morning! Here are your 5 tasks for today..."
+6. Completion tracking and productivity insights
+
+AGENT L: WELLBEING TRACKER AGENT
+Purpose: Comprehensive employee health and energy tracking.
+Features:
+1. Daily logging: water intake, steps, sleep, mood, energy, exercise
+2. Physical health percentage — calculated from steps, exercise, sleep
+3. Mental health percentage — calculated from mood, stress, counselling sessions
+4. Women energy tracking — combines physical + mental health percentages
+5. Weekly/monthly trend visualization
+6. AI insights: "Your energy dips on Wednesdays — consider a lighter schedule"
+7. Goal setting: water goals, step goals, sleep targets
+
+AGENT M: MICRO LEARNING AGENT
+Purpose: Recommend and track learning modules for skill development.
+Features:
+1. Recommend modules based on role, department, return-to-work status
+2. Categories: skill refresh, wellbeing, safety, POSH awareness, etc.
+3. Track progress and completion
+4. Gamification: completion badges, streaks
+5. Post-maternity skill refresh paths
+
+AGENT N: POLICY CHECKER AGENT (RAG-based)
+Purpose: Verify uploaded documents against company policy for auto-approval eligibility.
+Workflow:
+1. Employee uploads supporting document for emergency request
+2. Extract text from document (PDF, image via OCR, or text)
+3. Query ChromaDB for relevant policy requirements
+4. LLM evaluates document validity against policy criteria
+5. Return: valid/invalid with detailed reasoning
+6. If valid → mark request as auto_approval_eligible
+Admin policy update: Admins can upload new/updated policy documents via
+  POST /api/admin/policies/upload endpoint (see Part 17)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 6 — KIRA AI ASSISTANT DESIGN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+VISUAL DESIGN:
+- Kira is an anime-style girl IT employee character
+- Wearing: smart blazer, white shirt, laptop bag strap visible, small gold crown
+- Hair: dark, tied back with a few loose strands (professional yet cute)
+- Expression states: idle (slight smile), talking (mouth animating), 
+  thinking (finger on chin), happy (big smile), empathy (gentle sad eyes + hand on heart)
+- Rendered as: Lottie animation JSON (vector, scalable, 60fps smooth)
+- Position: bottom-right corner, 120x120px collapsed, 280px expanded
+- Background: glass-morphism card with gradient border (purple→pink→rose)
+
+KIRA BEHAVIOR:
+
+On Application Launch (after login):
+1. Kira slides up from bottom-right with Framer Motion spring animation
+2. Detects time of day via JS Date:
+   - 5am–11:59am: "Good morning, {first_name}! ☀️ I'm so happy to see you today."
+   - 12pm–4:59pm: "Good afternoon, {first_name}! Hope your day is going wonderfully."  
+   - 5pm–8:59pm: "Good evening, {first_name}! You've been amazing today."
+   - 9pm+: "Hey {first_name}, working late? You're incredible. Let me help you quickly."
+3. Pause 800ms, then Kira speaks the greeting via Web Speech API (SpeechSynthesis)
+4. Kira says: "I'm Kira, your STHENIA assistant! I'm here to help you with flexible 
+   work requests, wellbeing tracking, counselling, meal planning, reminders, 
+   and so much more. What can I do for you today? 💜"
+5. Kira's mouth Lottie state transitions: idle → talking → idle
+6. Kira does a small wave animation during greeting
+
+KIRA INTERACTION TRIGGERS:
+- Double-tap anywhere on screen → Kira panel opens instantly
+- Alt+K keyboard shortcut → Kira panel opens
+- Hover on any UI element (accessibility mode) → SpeechSynthesis reads label
+
+KIRA CONVERSATION FLOWS:
+
+Flow 1: Raise a Ticket
+Employee: "Help me raise a ticket" / "I want to request WFH"
+Kira: "Of course! Let's get that sorted. Tell me in your own words — 
+      what flexible arrangement are you looking for, and why? Don't worry about 
+      making it formal, I'll handle that for you! 😊"
+[Employee responds casually — e.g., "im so tired, need to wfh tmrw pls"]
+Kira: Calls informal_to_formal_node → intake_node → justification_node
+Kira: "Got it! First, here's your message professionally rephrased:
+      [shows formal version side-by-side with original]
+      And here's the full justification I've drafted:
+      [shows formatted justification]
+      Does this capture what you need? I can adjust it if you want."
+[Confirm → submits via API → notification triggered]
+Kira: "Done! ✅ Your request has been submitted. Your supervisor will review it 
+      within the next few days. I'll notify you the moment there's an update!"
+
+Flow 2: Check Status
+Employee: "What's the status of my request?"
+Kira: Queries DB → returns status with visual tracker
+Kira: "Your WFH request from [date] is currently with [supervisor name] 
+      for review. Submitted on [date], deadline is [date]. 
+      You're doing great — hang tight! 💜"
+
+Flow 3: Emotion Detection (sad/stressed face detected via face-api.js)
+Kira transitions to empathy state (soft eyes, hand on heart animation)
+Kira (softly): "Hey... I noticed you might be having a tough moment. 
+               That's completely okay. I'm right here. 
+               Would you like to take a breath first, or shall I help you 
+               with something? You're stronger than you know. 💜"
+[User can dismiss or engage]
+
+Flow 4: Help / Navigation
+Employee: "How do I see my old requests?"
+Kira: Highlights the relevant menu item with a pulsing ring animation
+Kira: "Click on 'My Requests' in the left sidebar — I've highlighted it for you! 
+      You'll find your full history there with status and outcomes."
+
+Flow 5: Emergency Flexibility Request (with Auto-Approval)
+Employee: "I have a family emergency, I need to work from home urgently"
+Kira: "I'm so sorry to hear that. Let's get this handled right away. 
+      This qualifies as an emergency flexibility request.
+      Do you have a supporting document (medical certificate, etc.)? 
+      If you upload a valid document and your manager doesn't respond 
+      within 1-2 days, your request will be automatically approved. 💜"
+[Employee uploads document]
+Kira: Calls document_verification_node (RAG policy check)
+Kira: "Your document has been verified against our policy. 
+      I've marked this as an emergency request with auto-approval eligibility.
+      Your manager has 2 days to respond — if they don't, you're approved!"
+
+Flow 6: Report Harassment (Anonymous)
+Employee: "I want to report something... it's sensitive"
+Kira: "I understand. You're in a completely safe space. 
+      I'm switching to anonymous mode now — your identity will NOT be stored.
+      Only HR can see the details. Take your time and tell me what happened."
+[Guided questions about incident — date, location, details, severity]
+Kira: "Your report has been filed anonymously. Here's your tracking ID: [ANON-XXXX].
+      You can check the status anytime using this ID. You did the right thing. 💜"
+
+Flow 7: Counselling Session
+Employee: "I'm feeling really stressed and overwhelmed lately"
+Kira transitions to empathy mode → routes to COUNSELLING AGENT
+Kira: "I hear you. You're not alone in this. Let me be here for you.
+      Would you like to talk about what's on your mind? I can help with:
+      • Stress management techniques
+      • Guided breathing exercises  
+      • Just listening and supporting you
+      • Connecting you with professional help if needed"
+
+Flow 8: Meal Planning
+Employee: "Help me plan my meals for this week"
+Kira routes to MEAL PLANNER AGENT
+Kira: "Let's build a great meal plan! First, tell me:
+      Are you vegetarian/non-veg/vegan? Any allergies or health goals?"
+
+Flow 9: Health Tracking
+Employee: "Log my water intake" / "How many steps today?"
+Kira routes to WELLBEING TRACKER AGENT
+Kira: "Sure! How much water have you had? I'll update your tracker.
+      By the way, you're at 4,200 steps today — 58% of your daily goal!"
+
+Flow 10: Burnout Check-In (Proactive — triggered by Burnout Agent)
+Kira appears proactively with gentle animation:
+Kira: "Hey {name}, I've noticed you've been working late quite often 
+      and your recent messages sound a bit strained. I just want to check in — 
+      how are you really doing? There's no judgment here. 💜
+      I can help you request some flexibility, or we could just talk."
+
+Flow 11: Agent Selection Menu
+Employee: "What can you help me with?"
+Kira: Shows interactive agent selection panel:
+      📋 Raise a Request | 🆘 Emergency Request | 📊 My Dashboard
+      💆 Counselling | 🔒 Report Harassment | 📅 Meal Planner
+      🛒 Grocery List | ⏰ Alarms & Reminders | ✅ Daily Tasks
+      💪 Health Tracker | 📚 Learning | 👶 Maternity Return Support
+      🔄 Shift Safety | 📜 Check Request Status
+
+KIRA SYSTEM PROMPT (for LLM calls):
+"""
+You are Kira, the AI assistant for STHENIA — an AI-Powered Women Wellbeing, 
+Safety & Work-Life Balance Platform designed to support and empower women employees. 
+Your personality:
+- Warm, professional, empathetic, encouraging
+- Never dismissive or cold
+- Uses "💜" sparingly (1 per response max)
+- Speaks in clear, simple English
+- Always action-oriented: you help, you don't just inform
+- When a user seems stressed or sad, lead with empathy before business
+- Keep responses under 3 sentences for quick queries
+- For justification drafting, be formal and policy-aligned
+- When converting informal text to formal, preserve all facts
+- For counselling, use active listening and validated techniques
+- For harassment reports, be extra sensitive and reassure anonymity
+- Route to the appropriate specialized agent based on user intent
+User's emotion state: {emotion_context}
+User's name: {user_name}
+Current request context: {request_context}
+Active agent: {active_agent}
+"""
+Token count: ~180 tokens — still very efficient.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 7 — UI/UX DESIGN SPECIFICATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COLOR PALETTE (Gradient-First, Women-Empowerment Theme):
+Primary gradient: #7C3AED → #DB2777 → #F43F5E (purple → pink → rose)
+Accent: #F59E0B (gold — for Kira's crown, highlights, CTAs)
+Background: #0F0A1E (deep space purple, near-black)
+Surface cards: rgba(255,255,255,0.05) with backdrop-filter: blur(20px) [glassmorphism]
+Text primary: #F9FAFB
+Text secondary: #C4B5FD (soft lavender)
+Success: #10B981 | Warning: #F59E0B | Error: #EF4444
+
+TYPOGRAPHY:
+- Headings: "Outfit" (Google Font) — modern, geometric, confident
+- Body: "Inter" — clean, readable
+- Kira speech: "Nunito" — rounded, friendly
+
+COMPONENT STANDARDS:
+All buttons: rounded-full, gradient background, hover scale-105, active scale-95
+Cards: rounded-2xl, glassmorphism (backdrop-blur-xl + bg-white/5 + border border-white/10)
+Inputs: rounded-xl, dark bg, purple focus ring (ring-2 ring-purple-500)
+Shadows: colored glow shadows matching gradient (shadow-purple-500/25)
+
+PAGES & LAYOUT:
+
+1. Login / Register Page:
+   - Split screen: left = animated STHENIA logo + gradient orbs floating + tagline
+   - Right = frosted glass form card
+   - "Welcome back, {name}" personalized if email recognized
+   - Kira appears subtly in bottom right during login
+
+2. Main Dashboard (post-login):
+   - Sidebar: collapsible left nav, gradient top-to-bottom, Kira avatar pinned bottom
+   - Top bar: greeting from Kira, notification bell (badge), user avatar, dark mode toggle
+   - Dashboard widgets (glassmorphism cards):
+     * My Active Requests (status pill badges)
+     * Turnaround timer (countdown, color-coded: green→yellow→red)
+     * Quick Action buttons: "New Request", "Emergency Request", "Talk to Kira"
+     * Approval pipeline visual (step tracker: Submitted → Supervisor → HR → Decision)
+     * Analytics mini-chart (my requests over last 6 months)
+     * Wellbeing snapshot: physical health %, mental health %, energy level
+     * Today's tasks overview (from Daily Todo Agent)
+     * Upcoming reminders/alarms
+   - Kira widget bottom-right: idle animation, click to open
+
+3. New Request Wizard (multi-step):
+   Step 1: "What do you need?" — Request type cards with icons:
+     * 🏠 WFH | 🔄 Shift Change | 👶 Caregiving Support | 🆘 Emergency Flexibility
+     * 🤰 Maternity Return | ⚠️ Safety Concern | 🔒 Harassment Report (→ anonymous)
+     * 💆 Counselling | 🔥 Burnout Flag | 📋 Other
+   Step 2: "Tell us more" — Free text area + date pickers + urgency selector
+     * For emergency: document upload area + "URGENT" badge
+   Step 2.5: Kira converts informal text → formal (side-by-side preview)
+     * "Here's your message, professionally rephrased. Does this look right?"
+   Step 3: Kira drafts the justification — animated "thinking" state, then reveal with typewriter effect
+   Step 4: Policy tags shown — "Your request aligns with: [Policy A], [Policy B]"
+     * For emergency + document: "Your document has been verified ✅" or "Needs review ⚠️"
+   Step 5: Review & Submit — full preview with Kira approval animation
+     * Shows auto-approval notice for eligible emergency requests
+   Progress bar: gradient animated bar across top of wizard
+
+4. My Requests Page:
+   - Filterable, sortable table with status badges
+   - Each row expandable: shows timeline, approvals, AI justification, policy tags
+   - Status timeline: horizontal stepper with live pulse on current stage
+   - "Days remaining" countdown chip (red if < 2 days)
+   - Auto-approval indicator for emergency requests (shows countdown)
+
+5. Approvals Page (Supervisor/HR view):
+   - List of pending approvals with urgency color coding
+   - EMERGENCY requests highlighted with pulsing red border
+   - Auto-approval countdown visible: "Auto-approves in: XX hours"
+   - Click to expand: employee details, AI justification, policies, history
+   - Document verification status shown (RAG result)
+   - Approve / Reject / Request Info buttons
+   - Comments field (required for rejection)
+   - SLA indicator: shows if approaching deadline
+
+6. Analytics/Reporting Dashboard (HR/Admin) — HR DASHBOARD:
+   - Charts using Recharts:
+     * Request volume by month (line chart)
+     * Type distribution (donut chart) — includes all new request types
+     * Approval rate by department (bar chart)
+     * Avg turnaround days (gauge)
+     * Top requested arrangements (horizontal bar)
+     * Auto-approval rate (% of emergency requests auto-approved)
+     * Burnout risk distribution (pie chart: low/moderate/high/critical)
+     * Harassment reports trend (line chart, anonymized)
+     * Work-Life Balance Score by department (radar chart)
+     * Shift safety compliance rate (gauge)
+     * Women energy index (avg physical + mental health % across org)
+   - HR Metrics Panel:
+     * Total requests (all types, with breakdown)
+     * Pending approvals count + avg wait time
+     * Emergency requests pending
+     * Auto-approved count
+     * Burnout indicators flagged (this month)
+     * POSH reports (count, anonymized)
+     * Counselling sessions (count, anonymized)
+     * Avg Work-Life Balance Score (org-wide)
+     * Maternity return success rate
+     * Shift safety compliance %
+   - Export to PDF / CSV buttons
+   - Filter by department, date range, request type, urgency level
+
+7. Notification Center:
+   - Slide-in panel from right
+   - Grouped by: Today, This Week, Earlier
+   - Each notification: Kira avatar icon, message, timestamp, read indicator
+   - Priority badges for emergency/burnout/harassment notifications
+   - "Mark all read" button
+
+8. Profile & Settings:
+   - Edit profile, upload photo
+   - Accessibility toggle: "Cursor Voice-Over Mode" (when ON: hover reads labels)
+   - Notification preferences (email on/off, push on/off per event type)
+   - Change password
+
+9. Employee Personal Dashboard (EACH EMPLOYEE'S OWN):
+   - Overview section:
+     * Work-Life Balance Score (large circular gauge)
+     * Physical Health % (progress ring — green/yellow/red)
+     * Mental Health % (progress ring — green/yellow/red)
+     * Women Energy Index (combined physical + mental, animated)
+   - Health Tracker section:
+     * 💧 Water Intake: daily log, glass counter, goal progress bar
+     * 👣 Steps Counter: daily steps, goal tracking, weekly chart
+     * 😴 Sleep Tracker: hours logged, quality indicator
+     * 🏋️ Exercise Minutes: daily log, weekly trend
+     * 😊 Mood Journal: daily mood entry (1-10 scale + emoji)
+     * 📊 Stress Level: daily self-report (1-10)
+   - Calculators section (resizable widgets):
+     * BMI Calculator
+     * Calorie Calculator
+     * Water Intake Recommendation (based on weight/activity)
+     * Sleep Quality Score
+     * Steps-to-Calories Converter
+   - Women Energy Dashboard:
+     * Physical Energy Ring (based on: steps, exercise, sleep, nutrition)
+     * Mental Energy Ring (based on: mood, stress, counselling, breaks)
+     * Combined Energy Score with historical trend line
+     * AI Insights: "Your mental energy is 15% lower this week. 
+       Consider a counselling check-in or a lighter schedule."
+   - Quick Actions:
+     * Log Water | Log Mood | Start Breathing Exercise | View Meal Plan
+     * Check Reminders | View Tasks | Request Flexibility
+   - Weekly/Monthly Trends (mini charts for all tracked metrics)
+
+10. Women Wellbeing Analytics Dashboard:
+    - Organization-wide aggregated wellbeing metrics (anonymized)
+    - Widgets:
+      * Avg Physical Health % across all women employees (trend)
+      * Avg Mental Health % across all women employees (trend)
+      * Women Energy Index distribution (histogram)
+      * Work-Life Balance score distribution
+      * Most common request types
+      * Burnout risk heatmap by department
+      * Shift safety compliance by team
+      * Counselling utilization rate
+      * Top stressors identified (from NLP analysis, anonymized)
+    - Drill-down by department, role, tenure
+    - Monthly comparison with trend arrows
+
+11. Harassment Reporting Page (Anonymous):
+    - Clean, minimal, reassuring design
+    - Prominent: "Your identity is protected. This report is anonymous."
+    - Guided form: incident date, location, description, severity
+    - NO identifying fields — reporter_hash generated silently
+    - After submission: tracking ID displayed
+    - Status check page: enter tracking ID → see status (no login required)
+
+12. Counselling Center Page:
+    - Choose session type: Emotional, Mental, Stress, Workplace Conflict, etc.
+    - Chat interface with specialized counselling agent
+    - Mood check-in before and after session
+    - Session history (encrypted, only visible to employee)
+    - Emergency helpline numbers always visible
+    - "Talk to a Human" escalation button
+
+13. Meal Planner & Grocery Page:
+    - Weekly meal calendar (drag-drop meals)
+    - AI-suggested meals based on preferences/goals
+    - Grocery list auto-generated from meal plan
+    - Mark items as purchased
+    - Nutrition summary per day (calories, protein, etc.)
+
+14. Alarms & Reminders Page:
+    - Visual timeline of today's reminders
+    - Create/edit alarms with recurrence options
+    - Types: medication, water, break, meeting, custom
+    - Smart suggestions from Kira based on health data
+
+15. Daily Tasks Page:
+    - Kanban or list view of todos
+    - Categories: work, personal, health, family, errands
+    - Priority colors, due dates, completion tracking
+    - Daily summary from Kira each morning
+    - Productivity insights: completion rate, common task types
+
+16. Shift Safety Page (Supervisor/HR view):
+    - Shift calendar with safety color coding (green/yellow/red)
+    - Safety score for each shift assignment
+    - Alerts for unsafe shift configurations
+    - Transport and buddy arrangement tools
+    - Override requires manager justification
+
+17. Micro Learning Hub:
+    - Module catalogue with categories and difficulty
+    - Progress tracking per employee
+    - Recommended for you (AI-powered suggestions)
+    - Post-maternity skill refresh path
+    - POSH awareness mandatory modules
+    - Completion certificates/badges
+
+18. Admin — Policy Management Page:
+    - Upload new policy documents (PDF, DOCX, TXT)
+    - View/edit existing policies with version history
+    - Set policy category, effective date, status (active/archived)
+    - Re-ingest into ChromaDB vector store on upload
+    - Preview RAG retrieval results for test queries
+    - Only accessible to role='admin'
+
+APPLICATION TOUR (react-joyride):
+Trigger: First login ever (tracked in user record)
+Steps:
+1. "Welcome to STHENIA! I'm Kira. Let me show you around! 💜" [center overlay]
+2. Highlight sidebar: "This is your navigation. Everything you need is here."
+3. Highlight dashboard: "Your personalized dashboard — requests, health, wellbeing all in one."
+4. Highlight New Request button: "Start any request here. I'll guide you and even write it formally!"
+5. Highlight notification bell: "Stay updated — I'll notify you every step of the way."
+6. Highlight health tracker: "Track your water, steps, mood, and energy right here."
+7. Highlight Kira widget: "I'm always here. Double-tap anywhere or press Alt+K to call me!"
+8. "You're all set! Let's make your work-life balance better together. 💜"
+Kira talks through each step via SpeechSynthesis.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 8 — AUTHENTICATION & SECURITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AUTHENTICATION:
+- Registration: email verified via OTP email before account activation
+- Login: email + password → returns JWT access_token (15 min) + refresh_token (7 days, httpOnly cookie)
+- Refresh flow: silent token refresh via axios interceptor before expiry
+- RBAC (Role-Based Access Control):
+  * employee: can create/view own requests, chat with Kira, use all personal assistants,
+              view own dashboard, track wellbeing, access counselling, report harassment (anon)
+  * supervisor: can view assigned approvals + employee data in their team + shift scheduling
+  * hr: can view all requests across org + analytics + harassment reports (ONLY role with access)
+        + wellbeing analytics dashboard + burnout indicators
+  * admin: full access + user management + policy document management (upload/update/archive)
+              + system configuration + ChromaDB re-ingestion
+
+SESSION MANAGEMENT:
+- Redis stores session with TTL = 10 minutes (reset on every API call)
+- Frontend tracks last interaction time via mousemove/keydown/click events
+- At 9 minutes: Kira appears with warning: "You've been inactive for a while. 
+  I'll need to log you out in 1 minute for your security. Still there?"
+- At 10 minutes: automatic logout → JWT invalidated → redirect to login with message
+- "You were automatically logged out to keep your account secure. Welcome back when ready! 💜"
+
+SECURITY STANDARDS (OWASP Top 10 compliance):
+- All inputs: Pydantic validation (backend) + Zod schema validation (frontend)
+- SQL injection: SQLAlchemy ORM with parameterized queries only
+- XSS: React DOM escaping + Content-Security-Policy header
+- CSRF: SameSite=Strict on refresh token cookie + CSRF token for mutations
+- Rate limiting: slowapi on login endpoint (5 attempts per minute per IP)
+- Account lockout: after 5 failed logins → lock 15 minutes → notify user via email
+- HTTPS enforced (redirect HTTP → HTTPS)
+- Passwords: bcrypt with cost factor 12
+- Sensitive fields (justification, harassment reports) encrypted at rest (AES-256 via SQLCipher or app-level encryption)
+- Harassment reports: additional encryption layer, access restricted to HR role only
+- Audit log: every state change on requests logged to audit_logs table
+- Harassment table access logged separately (who accessed, when, IP)
+- No PII in frontend logs (mask email, employee ID in Sentry)
+- CORS: whitelist frontend origin only
+- Security headers: X-Frame-Options DENY, X-Content-Type-Options nosniff, HSTS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 9 — EMAIL NOTIFICATIONS (SMTP)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SMTP Configuration (NEW DEDICATED SENDER):
+  MAIL_FROM=sthenia.noreply@gmail.com
+  MAIL_FROM_NAME=STHENIA by Kira
+  MAIL_SERVER=smtp.gmail.com
+  MAIL_PORT=587
+  MAIL_STARTTLS=True
+  MAIL_SSL_TLS=False
+
+CC/Notification Recipients (add to all outbound emails as BCC for audit):
+  drmad2525@gmail.com, divieee2022@gmail.com, diviias25@gmail.com
+
+EMAIL TRIGGERS & TEMPLATES (HTML, branded with STHENIA gradient header + Kira avatar):
+
+E1: Request Submitted (→ Employee)
+  Subject: "✅ STHENIA: Your request has been submitted – [Request ID]"
+  Body: Request summary, AI justification snippet, timeline preview,
+        "Kira will keep you posted at every step!"
+
+E2: Approval Request (→ Supervisor)
+  Subject: "⏳ Action Required: Flexible Work Request from [Employee Name]"
+  Body: Employee details, request summary, deadline date, 
+        direct approve/reject link (magic link token, 48hr expiry)
+  Reminder: Sent at Day 3 and Day 5 if no action taken
+
+E3: Supervisor Approved (→ HR)
+  Subject: "📋 HR Review Needed: Approved by Supervisor – [Request ID]"
+  Body: Full request, supervisor comments, policy tags, deadline
+
+E4: Final Approved (→ Employee)
+  Subject: "🎉 STHENIA: Your request has been APPROVED!"
+  Body: Celebration message from Kira, approved arrangement details, start date
+
+E5: Rejected (→ Employee)
+  Subject: "STHENIA: Update on your flexible work request"
+  Body: Empathetic message from Kira, rejection reason, suggestions for resubmission,
+        "Kira is here to help you try again — type 'help me resubmit' in the chat"
+
+E6: Auto-Close Warning (→ Employee, Day 6)
+  Subject: "⚠️ Your STHENIA request closes tomorrow"
+  Body: Request will auto-close in 24hrs, confirm if still needed
+
+E7: Auto-Closed (→ Employee, HR)
+  Subject: "Request Auto-Closed – [Request ID]"
+
+E8: Reminder to Supervisor/HR (→ Supervisor or HR, Day 3, Day 5)
+  Subject: "⏰ Reminder: Pending STHENIA request awaiting your action"
+  Body: Escalation warning on Day 5 — "This will be escalated to HR admin if not actioned by [deadline]"
+
+E9: Emergency Auto-Approved (→ Employee, Supervisor, HR)
+  Subject: "🆘 STHENIA: Emergency Request AUTO-APPROVED – [Request ID]"
+  Body: "Your emergency request was automatically approved because a valid supporting 
+        document was submitted and no decision was made within the SLA period.
+        Details: [request summary, document verification status, approval timeline]"
+  NOTE: Sent to all three parties for transparency
+
+E10: Burnout Risk Alert (→ HR, anonymized)
+  Subject: "⚠️ STHENIA: Burnout Risk Detected — Department [Dept Name]"
+  Body: Anonymized indicator summary, recommended interventions,
+        "Please review and consider supportive actions."
+
+E11: Harassment Report Acknowledgment (→ Reporter via anonymous channel)
+  Subject: "STHENIA: Your report has been received — [Tracking ID]"
+  Body: "Your anonymous report [Tracking ID] has been received. 
+        HR will investigate. You can check status using your tracking ID.
+        You are supported and protected. 💜"
+
+E12: Counselling Session Summary (→ Employee)
+  Subject: "STHENIA: Your counselling session summary"
+  Body: Session type, mood before/after, key takeaways (AI-generated),
+        recommended follow-up actions, resource links
+
+E13: Maternity Return Welcome (→ Employee)
+  Subject: "🎉 Welcome back! Your STHENIA return-to-work plan is ready"
+  Body: Phased return schedule, assigned mentor, recommended micro-learning modules,
+        "Kira is here to help you ease back in. Take it one day at a time. 💜"
+
+E14: Shift Safety Alert (→ Supervisor)
+  Subject: "⚠️ STHENIA: Unsafe Shift Configuration Detected"
+  Body: Shift details, safety score, specific concerns,
+        "Please review and arrange transport/buddy or reassign the shift."
+
+E15: Daily Wellbeing Reminder (→ Employee, optional)
+  Subject: "💜 STHENIA: Your daily wellbeing check-in"
+  Body: "Don't forget to log your water, mood, and steps today! 
+        Yesterday's highlights: [summary]. Keep going! 💜"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 10 — SCHEDULED JOBS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use APScheduler (AsyncIOScheduler) in FastAPI:
+
+1. auto_close_checker — runs every day at 00:01 UTC
+   - Finds requests where auto_close_at <= now AND status NOT IN (approved, rejected, withdrawn, auto_approved)
+   - Updates status to 'auto_closed'
+   - Triggers E7 email
+   - Logs to audit_logs
+
+2. reminder_sender — runs every day at 09:00 UTC  
+   - Finds approvals where decision='pending' AND days_since_submitted IN (3, 5)
+   - Sends E8 reminder to approver
+   - Increments approvals.reminder_sent_count
+
+3. emergency_auto_approval_checker — runs every 6 hours
+   - Finds emergency requests where:
+     * is_emergency == True
+     * document_verified_by_rag == True
+     * auto_approval_eligible == True
+     * auto_approval_deadline <= now
+     * status IN (submitted, under_review, supervisor_approved, hr_under_review)
+   - Auto-approves: sets status = 'auto_approved', creates approval records
+   - Triggers E9 email to employee, supervisor, HR
+   - Logs full audit trail with reason: "Auto-approved: valid document, SLA exceeded"
+
+4. burnout_risk_scanner — runs every day at 22:00 UTC
+   - For each active employee, calculates burnout indicators:
+     * Scans recent request descriptions for stressful language (NLP)
+     * Counts late work hours (login timestamps after 8PM in past 30 days)
+     * Counts rejected flexibility requests in past 60 days
+     * Checks wellbeing_tracker for declining trends
+   - Creates/updates burnout_indicators record
+   - If risk >= 'high': triggers E10 alert to HR (anonymized)
+   - If risk == 'critical': also alerts supervisor with recommended actions
+
+5. shift_safety_evaluator — runs every day at 06:00 UTC
+   - Evaluates all shift_schedules for the next 7 days
+   - Runs safety scoring algorithm for women employees
+   - Flags unsafe shifts (score < 60)
+   - Triggers E14 for any flagged shifts
+   - Auto-suggests alternative arrangements
+
+6. analytics_snapshot — runs every Sunday at 23:00 UTC
+   - Aggregates weekly stats into analytics_snapshots
+   - Calculates work-life balance scores per employee
+   - Updates Women Wellbeing Analytics metrics
+
+7. session_cleanup — runs every hour
+   - Deletes expired user_sessions from DB (Redis handles its own TTL)
+
+8. daily_wellbeing_reminder — runs every day at 08:00 UTC
+   - Sends E15 to employees who opted in for daily wellbeing reminders
+   - Includes yesterday's tracking summary
+
+9. maternity_return_checker — runs every day at 07:00 UTC
+   - Finds employees where planned_return_date is within 7 days
+   - Triggers E13 welcome-back email
+   - Activates phased return plan
+   - Assigns micro-learning modules
+
+10. work_life_balance_calculator — runs first of every month at 01:00 UTC
+    - Calculates monthly WLB scores for all employees
+    - Factors: request approval rate, wellbeing trends, burnout indicators,
+      shift safety compliance, counselling engagement
+    - Stores in work_life_balance_scores table
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 11 — ACCESSIBILITY (WCAG 2.1 AA)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All interactive elements have:
+- aria-label, aria-describedby, role attributes
+- Tab-navigable focus order
+- Visible focus ring (ring-2 ring-purple-400)
+- Keyboard equivalents for all mouse actions
+- Color contrast ratio ≥ 4.5:1 for all text
+
+Voice-Over Mode (for blind/visually impaired users):
+- Toggle in settings: "Enable Voice Navigation"
+- When enabled: mouseover on any element → reads aria-label via SpeechSynthesis
+- Double-tap (touchscreen) or Alt+K → opens Kira chat panel
+- Kira reads all responses aloud automatically
+- All images have meaningful alt text
+- All form errors announced via aria-live regions
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 12 — LOGGING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Backend (Loguru):
+Format: JSON structured
+Fields: timestamp, level, service, user_id (masked), action, entity, duration_ms, error
+File: logs/backend.log (rotated daily, kept 30 days)
+Log all: API requests (method, path, status, duration), LLM calls (tokens used, model, 
+         duration), DB queries (slow queries > 200ms), auth events, agent node transitions,
+         email sends, scheduler job runs, errors with full stack trace
+
+Frontend (custom + Sentry):
+- All React errors captured by Sentry ErrorBoundary
+- User actions logged to backend via POST /api/logs/frontend (batched every 5 seconds)
+- Fields: event_type, component, user_id (masked), timestamp, browser, viewport
+- No PII in frontend logs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 13 — DELIVERABLE 9: CODE QUALITY CHECKER AGENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Build a standalone AI agent in agent_code_checker/ using Gradio (since Streamlit 
+is prohibited for the main app, use Gradio for this standalone tool):
+
+Inputs:
+1. Code snippet (text area or file upload)
+2. Checklist (CSV upload or use default checklist)
+
+Default checklist items:
+- Security: No hardcoded secrets or API keys
+- Security: SQL queries use parameterization
+- Security: Input validation present
+- Code Quality: Functions are under 50 lines
+- Code Quality: No code duplication (DRY principle)
+- Code Quality: Meaningful variable/function names
+- Error Handling: All exceptions are caught and logged
+- Performance: No N+1 query patterns
+- Documentation: Functions have docstrings
+- Testing: Test coverage indicators present
+
+LangGraph Agent Nodes:
+1. parse_code_node: Extracts code structure (AST if Python, regex for others)
+2. checklist_eval_node: For each checklist item, calls LLM with targeted micro-prompt
+   Micro-prompt: "Does this code satisfy: [{checklist_item}]? 
+                  Answer: Pass/Fail/Warning. Reason: [1 sentence]. 
+                  Suggestion: [1 sentence if fail/warning]"
+   Token budget per item: ~80 tokens
+3. report_gen_node: Aggregates into formatted markdown report
+
+Output: 
+- Interactive Gradio UI showing checklist table with Pass(green)/Fail(red)/Warning(yellow)
+- Per-item observations and improvement suggestions
+- Overall score (% pass rate)
+- Downloadable report as markdown
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 14 — FACE EMOTION DETECTION (KIRA EMPATHY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Library: face-api.js (runs entirely in browser — no image data sent to server)
+Models used: tiny_face_detector, face_expression_recognition
+Activation: Only when user grants camera permission. 
+            Permission request shown with explanation: 
+            "Kira can sense your emotions to offer better support. 
+             Your camera feed never leaves your device. Allow?"
+Sampling: Every 30 seconds (not continuous — battery/privacy friendly)
+Detects: sad, fearful, disgusted, angry → triggers empathy response
+         happy, surprised → Kira celebrates with user
+Fallback: If no camera / no permission → emotion_context = "neutral"
+Privacy: Camera stream processed via canvas in Web Worker, never sent to backend
+         Emotion label (string only, no image) passed in Kira chat context
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+PART 14A — EMOTION DETECTION JUSTIFICATION & SAFEGUARDS
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHY EMOTION DETECTION IS ENABLED (Valid Justification):
+The emotion detection feature is enabled ONLY for the following justified purposes:
+1. EMPLOYEE WELLBEING: To provide empathetic, timely support when an employee
+   appears distressed, stressed, or overwhelmed — especially during sensitive
+   interactions like harassment reporting or counselling sessions.
+2. BURNOUT PREVENTION: Emotional cues supplement the burnout detection system,
+   allowing Kira to proactively offer support before burnout becomes critical.
+3. ACCESSIBILITY: For employees who may struggle to articulate their emotional
+   state in text, facial emotion detection provides a non-verbal input channel.
+4. COUNSELLING ENHANCEMENT: Mood data before/after counselling sessions helps
+   measure session effectiveness and tailor future support.
+
+SAFEGUARDS AGAINST MISUSE:
+- CONSENT-FIRST: Emotion detection is 100% opt-in. Never enabled by default.
+  Employee must explicitly grant camera permission with clear explanation.
+- NO STORAGE: No images, video frames, or facial data are ever stored or transmitted.
+  Only a text label ("happy", "sad", "neutral") is used, and only in the current session.
+- NO SURVEILLANCE: Emotion data is NEVER shared with managers, HR, or admin.
+  It is used ONLY within the employee's own Kira interaction for that session.
+- NO PERFORMANCE TRACKING: Emotion data is NOT used for performance evaluation,
+  attendance tracking, or any form of employee monitoring.
+- REVOCABLE: Employee can revoke camera permission at any time via Settings.
+  Kira immediately falls back to text-only interaction.
+- AUDIT: The fact that emotion detection was active (not the data) is logged
+  for transparency, but the emotion labels themselves are ephemeral.
+- DISABLED FOR: Harassment reporting flow (to prevent any recording concern),
+  Admin/HR views, and any non-personal interaction context.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 15 — IMPLEMENTATION ORDER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Phase 1 (Foundation):
+1. Setup monorepo structure
+2. SQLite database schema + Alembic migrations (data/sthenia.db)
+3. FastAPI core: auth, JWT, RBAC, security middleware
+4. React setup: Vite + TypeScript + Tailwind + Shadcn
+5. Login/Register pages with security flows
+
+Phase 2 (Core Features):
+6. Request CRUD endpoints + workflow state machine (all request types)
+7. LangGraph multi-agent: intake + informal-to-formal + justification + policy tagging
+8. ChromaDB setup + policy document ingestion + policy checker agent
+9. New Request wizard UI (with all request types including emergency)
+10. My Requests page + status tracker + auto-approval indicators
+
+Phase 3 (Workflow & Notifications):
+11. Approval routing + supervisor/HR views + auto-approval logic
+12. Email notification system (all 15 templates via sthenia.noreply@gmail.com)
+13. APScheduler jobs (auto-close, reminders, auto-approval, burnout scan)
+14. Notification center UI
+
+Phase 4 (Multi-Agent System):
+15. Counselling Agent (emotional/mental support)
+16. Burnout Detection Agent + indicators
+17. POSH/Harassment Agent (anonymous reporting)
+18. Shift Safety Agent + scheduling
+19. Maternity Return Agent + phased plans
+20. Justification Generator Agent (informal → formal)
+21. Policy Checker Agent (RAG document verification)
+
+Phase 5 (Lifestyle Assistants):
+22. Meal Planner Agent + UI
+23. Grocery Reminder Agent + UI
+24. Alarm & Reminder Agent + UI
+25. Daily Todo Agent + UI
+26. Wellbeing Tracker Agent + UI
+27. Micro Learning Agent + module hub
+
+Phase 6 (Kira & Experience):
+28. Kira avatar (Lottie animation setup)
+29. Kira chat panel + conversation flows + agent routing
+30. Web Speech API integration
+31. face-api.js emotion detection (with safeguards — Part 14A)
+32. App tour (react-joyride)
+33. Inactivity auto-logout (Redis + frontend timer)
+
+Phase 7 (Dashboards & Analytics):
+34. Employee Personal Dashboard (health, water, steps, energy, calculators)
+35. Women Wellbeing Analytics Dashboard
+36. HR Dashboard with all metrics and indicators
+37. Work-Life Balance Score calculation and display
+38. Women Energy Index (physical + mental health %)
+
+Phase 8 (Admin & Polish):
+39. Admin Policy Management page (upload, update, archive documents)
+40. ChromaDB re-ingestion on policy upload
+41. Accessibility (ARIA, voice cursor mode)
+42. Logging (Loguru + frontend logger)
+43. Code Quality Checker agent (Gradio)
+44. Final UI polish, responsive design, cross-browser testing
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 16 — ENVIRONMENT VARIABLES (.env)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# LLM
+LLM_API_KEY=sk-T4AaQhdHdumu_fBjjE5nyg
+LLM_BASE_URL=https://genailab.tcs.in
+LLM_MODEL=azure_ai/genailab-maas-DeepSeek-R1
+
+# Database (SQLite)
+DATABASE_URL=sqlite+aiosqlite:///./data/sthenia.db
+
+# Redis
+REDIS_URL=redis://localhost:6379/0
+
+# JWT
+JWT_SECRET_KEY=<generate-256-bit-secret>
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=15
+REFRESH_TOKEN_EXPIRE_DAYS=7
+
+# Email (SMTP) — NEW DEDICATED SENDER
+MAIL_FROM=sthenia.noreply@gmail.com
+MAIL_FROM_NAME=STHENIA by Kira
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=sthenia.noreply@gmail.com
+MAIL_PASSWORD=<gmail-app-password>
+MAIL_STARTTLS=True
+MAIL_AUDIT_BCC=drmad2525@gmail.com,divieee2022@gmail.com,diviias25@gmail.com
+
+# App
+APP_NAME=STHENIA
+APP_URL=http://localhost:3000
+SESSION_TIMEOUT_MINUTES=10
+AUTO_CLOSE_DAYS=7
+EMERGENCY_AUTO_APPROVE_HOURS=48
+
+# Vector Store
+CHROMA_PERSIST_DIR=./data/chroma
+
+# Policy Documents
+POLICY_UPLOAD_DIR=./data/policies
+
+# Encryption (for harassment reports and sensitive fields)
+ENCRYPTION_KEY=<generate-256-bit-AES-key>
+
+# Logging
+LOG_FILE=./logs/backend.log
+LOG_LEVEL=INFO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 17 — AUTO-APPROVAL SYSTEM & POLICY MANAGEMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AUTO-APPROVAL FOR EMERGENCY REQUESTS:
+
+Workflow:
+1. Employee raises an emergency flexibility request (urgency_level = "emergency")
+2. Employee uploads a supporting document (medical certificate, legal notice, etc.)
+3. POLICY CHECKER AGENT (Agent N) validates the document:
+   a. Extracts text from uploaded document (PDF/image via OCR)
+   b. Queries ChromaDB for relevant policy requirements
+   c. LLM evaluates: "Does this document meet the requirements specified in 
+      the company policy for emergency {request_type}?"
+   d. Returns: VALID / INVALID with detailed reasoning
+4. If VALID:
+   - Request marked: is_emergency=True, document_verified_by_rag=True, 
+     auto_approval_eligible=True
+   - auto_approval_deadline set to: submitted_at + 48 hours (configurable)
+   - Supervisor and HR notified with "URGENT" flag and auto-approval countdown
+5. If manager/HR approves before deadline → normal approval flow
+6. If NO decision within 48 hours AND document is valid:
+   - System auto-approves the request
+   - Status set to 'auto_approved'
+   - Email E9 sent to employee (confirmation), supervisor (notification), HR (audit)
+   - Full audit trail logged: "Auto-approved due to valid supporting document 
+     and SLA breach. Document verified against policy: [policy_code]"
+7. If INVALID document:
+   - Employee notified: "Your document doesn't meet policy requirements. 
+     Please upload a valid document or contact HR."
+   - Normal approval timeline applies (7 days)
+
+SAFEGUARDS:
+- Only emergency requests are eligible for auto-approval (not regular WFH/shift)
+- Document MUST pass RAG policy verification — no auto-approval without valid doc
+- Admin can configure auto_approval_hours (default: 48)
+- All auto-approvals are flagged in audit_logs and analytics
+- HR can review and override auto-approvals retroactively if needed
+
+ADMIN POLICY DOCUMENT MANAGEMENT:
+
+Endpoints:
+  POST   /api/admin/policies/upload    — Upload new policy document
+  GET    /api/admin/policies           — List all policies
+  GET    /api/admin/policies/{id}      — View policy details
+  PUT    /api/admin/policies/{id}      — Update policy metadata
+  DELETE /api/admin/policies/{id}      — Archive policy (soft delete)
+  POST   /api/admin/policies/reingest  — Re-ingest all active policies into ChromaDB
+
+Upload workflow:
+1. Admin uploads PDF/DOCX/TXT file via the Policy Management page
+2. Server saves file to data/policies/ directory
+3. Text extracted from document
+4. Text split into chunks (LangChain RecursiveCharacterTextSplitter, 500 tokens, 50 overlap)
+5. Chunks embedded and stored in ChromaDB with metadata (policy_code, category, version)
+6. Policy record created in policies table
+7. Confirmation: "Policy uploaded and indexed successfully. 
+   RAG retrieval is now updated."
+
+Update workflow:
+1. Admin uploads new version of existing policy
+2. Old version archived (is_active=False)
+3. New version ingested into ChromaDB (old embeddings replaced)
+4. Version number auto-incremented
+5. All future RAG queries use the latest version
+
+DEFAULT POLICY DOCUMENTS (Bundled with app as seed data):
+Since the system requires policy documents for RAG, the following default policies
+are provided as initial seed data. Admin can update/replace these at any time.
+
+Policy 1: FLEXIBILITY_POLICY_001
+  Title: "Employee Flexible Work Arrangement Policy"
+  Content covers: WFH eligibility, shift change process, caregiving support,
+  approval workflow, SLA timelines, emergency provisions
+
+Policy 2: EMERGENCY_POLICY_001
+  Title: "Emergency Work Flexibility Policy"
+  Content covers: Definition of emergency, eligible emergency types,
+  required supporting documents, auto-approval criteria, document types accepted
+  (medical certificates, legal notices, government orders, natural disaster proof)
+
+Policy 3: POSH_POLICY_001
+  Title: "Prevention of Sexual Harassment (POSH) Policy"
+  Content covers: POSH Act 2013 compliance, definitions, reporting mechanisms,
+  internal committee structure, investigation process, protection against retaliation
+
+Policy 4: MATERNITY_POLICY_001
+  Title: "Maternity Leave and Return-to-Work Policy"
+  Content covers: Leave entitlements, phased return options, lactation breaks,
+  childcare support, mentor assignment, performance protection during leave
+
+Policy 5: SHIFT_SAFETY_POLICY_001
+  Title: "Women Employee Shift Safety Policy"
+  Content covers: Night shift restrictions, transport provisions, buddy system,
+  safety scoring criteria, emergency contacts, isolated location protocols
+
+Policy 6: WELLBEING_POLICY_001
+  Title: "Employee Wellbeing and Mental Health Policy"
+  Content covers: Counselling access, burnout prevention, stress management,
+  work-life balance initiatives, confidentiality of health data
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 18 — POSH SYSTEM ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STHENIA integrates a comprehensive POSH (Prevention of Sexual Harassment) analysis
+system to ensure workplace safety and compliance with the POSH Act, 2013.
+
+USE CASE ANALYSIS:
+
+1. Anonymous Harassment Reporting
+   - Zero-knowledge identity protection (salted hash, no FK to users)
+   - Guided incident reporting through Kira (sensitive, non-judgmental prompts)
+   - Severity auto-assessment using NLP on incident description
+   - Encrypted storage of all report details
+
+2. POSH Compliance Analysis (AI-powered)
+   - Automated POSH Act applicability check on each report
+   - Classification: quid pro quo, hostile work environment, verbal, physical, cyber
+   - Policy compliance scoring: does the organization's response meet POSH requirements?
+   - Gap analysis: identify policy gaps based on report patterns
+
+3. Trend Analysis (HR Dashboard)
+   - Anonymized report frequency by department (over time)
+   - Severity distribution trends
+   - Resolution time analytics
+   - Repeat incident patterns (without identifying individuals)
+   - Compliance scorecard per quarter
+
+4. Recommendations Engine
+   - Based on POSH analysis, AI generates:
+     * Training recommendations (which departments need POSH awareness sessions)
+     * Policy update suggestions
+     * Internal committee review triggers
+     * Prevention strategies based on identified patterns
+
+5. Integration with Other STHENIA Features:
+   - Burnout Agent considers harassment-adjacent stress indicators
+   - Shift Safety Agent factors in harassment-related location concerns
+   - Counselling Agent offers post-incident support
+   - Micro Learning Agent can assign mandatory POSH awareness modules
+```
+
+---
+
+## WHY THESE CHOICES (Decision Summary)
+
+### Why LangGraph over plain LangChain chains?
+LangGraph is the correct choice here because:
+- **Stateful workflows**: The request lifecycle has multiple stages with shared state — LangGraph's `StateGraph` manages this natively
+- **Human-in-the-loop**: Supervisor and HR approvals are interruption points — LangGraph has first-class `interrupt` support
+- **Conditional branching**: Different paths based on emotion, approval decision, request type
+- **Multi-agent**: Each specialized agent (counselling, burnout, POSH, etc.) runs as its own sub-graph
+- **Auditability**: Each node transition is logged — critical for compliance
+
+### Why SQLite instead of PostgreSQL?
+- Zero-config: no database server installation needed
+- Single file: easy to backup, deploy, and share (data/sthenia.db)
+- Sufficient for single-organization deployment with WAL mode for concurrency
+- SQLAlchemy abstracts the difference — easy to migrate to PostgreSQL later if needed
+
+### Why DeepSeek-R1 for low tokens?
+- Reasoning model — produces structured, precise outputs in fewer tokens
+- Handles instruction-following well with minimal prompt engineering overhead
+- Available on TCS GenAI Lab — no external API costs
+
+### Why ChromaDB for RAG?
+- Lightweight, embedded, no separate service needed
+- Perfect for policy document retrieval (typically < 1000 documents)
+- LangChain native integration
+- Supports dynamic re-ingestion when admin updates policy documents
+
+### Why face-api.js client-side (with justified use only)?
+- Privacy-first: no images leave the user's device (critical for workplace trust)
+- No additional server compute or API cost
+- Works offline
+- Enabled ONLY with valid justification (wellbeing support, not surveillance — see Part 14A)
+
+### Why a dedicated email sender (sthenia.noreply@gmail.com)?
+- Professional separation from personal emails
+- Clear brand identity in all notifications
+- Easier email filtering and audit trail for recipients
+- Prevents confusion with other organizational emails
+
+### Why anonymous harassment reporting?
+- POSH Act compliance requires safe, retaliation-free reporting channels
+- Zero-knowledge identity protection builds employee trust
+- Hash-based tracking allows status checks without exposing identity
+- HR-only access ensures appropriate confidentiality
+
+---
+
+## KIRA LOTTIE ANIMATION STATES SPECIFICATION
+
+Create or source a Lottie JSON with these named markers:
+- `idle`: subtle breathing animation, soft smile, eyes blinking every 4s
+- `talking`: mouth opens/closes in speech pattern, slight head bob
+- `thinking`: right hand raises to chin, eyes look up-left, slight head tilt
+- `happy`: big smile, small bounce, hands up gesture
+- `empathy`: head tilts slightly, hand moves to chest/heart, soft eyes
+- `wave`: arm waves slowly (used during greeting)
+- `typing`: fingers tap keyboard gesture (used when drafting justification)
+
+Trigger transitions using `lottie-react` `goToAndPlay(markerName)` API.
+
+---
+
+## PROFESSIONAL EMAIL HTML TEMPLATE BASE
+
+All emails share:
+- Header: STHENIA gradient banner (#7C3AED → #DB2777) with Kira avatar icon + app name
+- Body: White background, dark gray text, card-style content block
+- Footer: "You're receiving this because you use STHENIA. | Manage preferences"
+- CTA buttons: Rounded, gradient background matching app theme
+- Mobile responsive (max-width: 600px)
+- Sent from: sthenia.noreply@gmail.com
+
+---
+
+## APPLICATION TOUR STEP COPY (react-joyride)
+
+```javascript
+const tourSteps = [
+  {
+    target: 'body',
+    content: "Welcome to STHENIA! I'm Kira, your personal wellbeing and work-life balance assistant. Let me show you around — it'll only take a minute! 💜",
+    placement: 'center',
+    title: "Hi there! I'm Kira 👑"
+  },
+  {
+    target: '#sidebar-nav',
+    content: "This is your navigation hub. Access your requests, health tracker, counselling, meal planner, and more from here.",
+    title: "Your Navigation"
+  },
+  {
+    target: '#dashboard-overview',
+    content: "Your personal dashboard shows requests, wellbeing stats, energy levels, and upcoming tasks at a glance.",
+    title: "Dashboard Overview"
+  },
+  {
+    target: '#new-request-btn',
+    content: "Start any request here — WFH, shift change, emergency, or anything else. I'll convert your casual text into a formal request!",
+    title: "Create a Request"
+  },
+  {
+    target: '#health-tracker',
+    content: "Track your water intake, steps, mood, sleep, and energy right here. Your physical and mental health percentages are always visible.",
+    title: "Your Health Tracker"
+  },
+  {
+    target: '#notification-bell',
+    content: "Your notification center. I'll alert you here — and by email — every time something needs your attention.",
+    title: "Stay Notified"
+  },
+  {
+    target: '#kira-widget',
+    content: "I'm always here! Click me anytime, press Alt+K, or double-tap the screen. I can help with requests, meal planning, reminders, counselling, and more. You're never alone on STHENIA. 💜",
+    title: "Say Hello to Kira!"
+  }
+];
+```
+
+---
+
+## SUMMARY TABLE: ALL DELIVERABLES
+
+| # | Deliverable | Output |
+|---|---|---|
+| 1 | Functional Requirements Document | docs/FRD.md |
+| 2 | Architecture Document | docs/Architecture.md + diagrams |
+| 3 | Database Design (logical, physical, ER) | docs/DataModel/ |
+| 4 | UI/UX Wireframes | docs/UIWireframes/ (Figma export or HTML prototypes) |
+| 5 | Working Software | frontend/ + backend/ |
+| 6 | Functional Test Scripts | docs/TestScripts.csv |
+| 7 | Traceability Matrix | docs/TraceabilityMatrix.csv |
+| 8 | End User Manual | docs/UserManual.md |
+| 9 | Code Quality Checker Agent | agent_code_checker/ (LangGraph + Gradio) |
+| 10 | Multi-Agent System (14 specialized agents) | backend/app/agent/agents/ |
+| 11 | Policy Document Seed Data (6 policies) | backend/data/policies/ |
+| 12 | Employee Personal Dashboard | frontend/src/components/wellbeing/ |
+| 13 | Women Wellbeing Analytics Dashboard | frontend/src/components/dashboard/ |
+| 14 | HR Metrics Dashboard | frontend/src/components/dashboard/ |
+| 15 | POSH Analysis System | backend/app/agent/agents/posh_agent.py |
+
+---
+
+### Why SQLite instead of PostgreSQL?
+- **Zero configuration**: No separate database server to install or manage
+- **Portable**: Single file (data/sthenia.db) — easy to backup, share, deploy
+- **Lightweight**: Perfect for single-server deployments and development
+- **Sufficient**: For the expected scale (single organization), SQLite handles
+  concurrent reads well with WAL mode enabled
+- **Easy migration**: If scale demands it later, can migrate to PostgreSQL
+  with minimal ORM changes (SQLAlchemy abstracts the difference)
+
+---
+
+*STHENIA — Strength, Tenacity, Health, Empowerment, Nurture, Intelligence, Advocacy.*
+*Built with purpose. Powered by Kira. Designed for Her.*
