@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-Tier Scoped AI Architecture</title>
+    <style>
+        body {
+            background: #f0f4f8;
+            padding: 40px;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+        }
+       .diagram-container {
+            width: 740px;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        h2 {
+            text-align: center;
+            color: #1a365d;
+            margin-top: 0;
+            margin-bottom: 40px;
+        }
+        
+        /* Layer Scopes */
+       .layer {
+            border-radius: 12px;
+            padding: 30px 25px;
+            position: relative;
+            margin-bottom: 0;
+        }
+       .layer-label {
+            position: absolute;
+            top: -12px;
+            left: 25px;
+            padding: 0 12px;
+            font-weight: 700;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+       .l1 { border: 2px dashed #3182ce; background: #ebf8ff; }
+       .l1.layer-label { background: #ebf8ff; color: #2b6cb0; }
+        
+       .l2 { border: 2px dashed #dd6b20; background: #fffaf0; }
+       .l2.layer-label { background: #fffaf0; color: #c05621; }
+        
+       .l3 { border: 2px dashed #38a169; background: #f0fff4; }
+       .l3.layer-label { background: #f0fff4; color: #2f855a; }
+
+        /* Nodes */
+       .nodes-wrapper {
+            display: flex;
+            padding-left: 20px;
+            gap: 100px;
+        }
+       .node {
+            width: 220px;
+            box-sizing: border-box;
+            padding: 18px;
+            border-radius: 10px;
+            border: 2px solid;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+            cursor: default;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            position: relative;
+            z-index: 2;
+        }
+       .node h4 { margin: 0 0 8px 0; font-size: 16px; }
+       .node p { margin: 0; font-size: 13px; color: #4a5568; line-height: 1.4; }
+        
+        /* Node Colors & Hover Effects */
+       .n-ui { border-color: #3182ce; color: #2b6cb0; }
+       .n-ui:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(49, 130, 206, 0.15); background: #ebf8ff; }
+        
+       .n-api { border-color: #dd6b20; color: #c05621; }
+       .n-api:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(221, 107, 32, 0.15); background: #fffaf0; }
+        
+       .n-agent { border-color: #805ad5; color: #6b46c1; }
+       .n-agent:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(128, 90, 213, 0.15); background: #faf5ff; }
+        
+       .n-db { border-color: #38a169; color: #2f855a; }
+       .n-db:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(56, 161, 105, 0.15); background: #f0fff4; }
+        
+       .n-ext { border-color: #e53e3e; color: #c53030; }
+       .n-ext:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(229, 62, 62, 0.15); background: #fff5f5; }
+
+        /* Connections */
+       .line-color { background: #a0aec0; }
+       .border-color { border-color: #a0aec0; }
+        
+       .v-connection {
+            display: flex;
+            flex-direction: column;
+            padding-left: 154px; 
+        }
+       .v-line { width: 2px; height: 30px; }
+       .arrow-down {
+            width: 0; height: 0;
+            border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid;
+            margin-left: -5px; 
+        }
+        
+       .h-connection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            position: absolute;
+            left: 240px; 
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+       .h-line { height: 2px; width: 60px; }
+       .arrow-left { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-right: 7px solid; }
+       .arrow-right { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 7px solid; }
+
+       .branch-connection {
+            position: relative;
+            height: 40px;
+            margin-top: -2px;
+        }
+       .b-drop { position: absolute; left: 154px; top: 0; width: 2px; height: 20px; }
+       .b-split { position: absolute; left: 154px; top: 20px; width: 320px; height: 2px; }
+       .b-down-1 { position: absolute; left: 154px; top: 20px; width: 2px; height: 20px; }
+       .b-down-2 { position: absolute; left: 474px; top: 20px; width: 2px; height: 20px; }
+       .b-arrow-1 { position: absolute; left: 149px; top: 40px; }
+       .b-arrow-2 { position: absolute; left: 469px; top: 40px; }
+        
+        /* Informational Text */
+       .info-text {
+            text-align: center;
+            font-size: 13px;
+            color: #718096;
+            margin-top: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <h2>3-Tier AI Integration Architecture</h2>
+        
+        <div class="layer l1">
+            <div class="layer-label">Layer 1: User Experience</div>
+            <div class="nodes-wrapper">
+                <div class="node n-ui">
+                    <h4>User Interface (UI)</h4>
+                    <p>Employee submits requests & checks status.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="v-connection">
+            <div class="v-line line-color"></div>
+            <div class="arrow-down border-color"></div>
+        </div>
+
+        <div class="layer l2">
+            <div class="layer-label">Layer 2: Protected API & Logic Core</div>
+            <div class="nodes-wrapper" style="position: relative;">
+                <div class="node n-api">
+                    <h4>API Gateway</h4>
+                    <p>Handles requests, routing, & PII sanitization.</p>
+                </div>
+                
+                <div class="h-connection">
+                    <div class="arrow-left border-color"></div>
+                    <div class="h-line line-color"></div>
+                    <div class="arrow-right border-color"></div>
+                </div>
+
+                <div class="node n-agent">
+                    <h4>AI Agents</h4>
+                    <p>Drafts requests, parses logic, & flags HR bias.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="branch-connection">
+            <div class="b-drop line-color"></div>
+            <div class="b-split line-color"></div>
+            <div class="b-down-1 line-color"></div>
+            <div class="b-down-2 line-color"></div>
+            <div class="arrow-down border-color b-arrow-1"></div>
+            <div class="arrow-down border-color b-arrow-2"></div>
+        </div>
+
+        <div class="layer l3">
+            <div class="layer-label">Layer 3: Data & External Integration</div>
+            <div class="nodes-wrapper">
+                <div class="node n-db">
+                    <h4>Databases</h4>
+                    <p>Vector DB (Policies) & HRIS (Internal Data).</p>
+                </div>
+                <div class="node n-ext">
+                    <h4>External Systems</h4>
+                    <p>Mail, Telegram & Childcare booking APIs.</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="info-text">
+            <strong>Data Isolation Enforced:</strong> The User Interface (Layer 1) and Data/External Systems (Layer 3) 
+            can <em>only</em> communicate through the secure API Gateway (Layer 2). The AI Agents operate exclusively behind the 
+            API to ensure strict PII sanitization and policy enforcement.
+        </p>
+    </div>
+</body>
+</html>
