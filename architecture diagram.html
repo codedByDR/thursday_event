@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Assisted HR Flexible Work Architecture</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#ffffff',
+                primaryTextColor: '#333333',
+                primaryBorderColor: '#7C0000',
+                lineColor: '#666666',
+                secondaryColor: '#f4f4f4',
+                tertiaryColor: '#fff'
+            }
+        });
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+       .diagram-card {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+        }
+        h2 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+        p.subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+       .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+       .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #444;
+        }
+       .color-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 8px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="diagram-card">
+        <h2>Agentic AI Flexible Work & Well-Being Architecture</h2>
+        <p class="subtitle">End-to-End Workflow with Childcare Integration & Data Sanitization</p>
+        
+        <pre class="mermaid">
+        graph TD
+            %% Styling Classes
+            classDef experience fill:#E3F2FD,stroke:#1E88E5,stroke-width:2px,color:#0D47A1;
+            classDef orchestration fill:#FFF3E0,stroke:#F89B29,stroke-width:2px,color:#E65100;
+            classDef agents fill:#E8F5E9,stroke:#43A047,stroke-width:2px,color:#1B5E20;
+            classDef data fill:#F3E5F5,stroke:#8E24AA,stroke-width:2px,color:#4A148C;
+            classDef external fill:#FFEBEE,stroke:#E53935,stroke-width:2px,color:#B71C1C;
+            classDef security fill:#E0F7FA,stroke:#00ACC1,stroke-width:2px,color:#006064,stroke-dasharray: 5 5;
+
+            subgraph Experience_Layer
+                UI[Employee Intuitive Interface]:::experience
+                ManagerUI:::experience
+            end
+
+            subgraph Security_Layer
+                PIIGateway:::security
+            end
+
+            subgraph Orchestration_Layer
+                Orchestrator[Central Agentic Orchestrator]:::orchestration
+                Semantic:::orchestration
+            end
+
+            subgraph Agent_Layer
+                DraftingAgent:::agents
+                PolicyAgent:::agents
+                BiasAgent:::agents
+                CalAgent:::agents
+                AnalyticsAgent[Longitudinal Analytics Agent]:::agents
+            end
+
+            subgraph Data_Layer
+                Chroma:::data
+                Snowflake:::data
+                HRIS:::data
+            end
+
+            subgraph External_Layer ["6. External API Ecosystem"]
+                MSGraph[Microsoft Graph API]:::external
+                GoogleCal[Google Calendar API]:::external
+                ChildcareAPI:::external
+            end
+
+            %% User Flow & Security
+            UI -->|Natural Language Request| PIIGateway
+            PIIGateway -->|Sanitized Context| Orchestrator
+            Orchestrator <--> Semantic
+            
+            %% Agentic Delegation
+            Orchestrator --> PolicyAgent
+            PolicyAgent <--> Chroma
+            
+            Orchestrator --> DraftingAgent
+            DraftingAgent -->|Structured Professional Draft| Orchestrator
+            
+            Orchestrator --> CalAgent
+            CalAgent <--> MSGraph
+            CalAgent <--> GoogleCal
+            CalAgent <--> ChildcareAPI
+            
+            %% Manager Approval & Bias Auditing
+            Orchestrator -->|Policy-Tagged Request| ManagerUI
+            ManagerUI -->|Approval / Denial Rationale| BiasAgent
+            BiasAgent -->|Four-Fifths Rule Check & HCAI Audit| HRIS
+            
+            %% Longitudinal Data Flow
+            HRIS -->|Trajectory Data| Snowflake
+            Snowflake <--> AnalyticsAgent
+            AnalyticsAgent -->|Predictive Burnout Alerts| ManagerUI
+        </pre>
+
+        <div class="legend">
+            <div class="legend-item"><div class="color-box" style="background:#E3F2FD; border-color:#1E88E5;"></div> Experience Layer</div>
+            <div class="legend-item"><div class="color-box" style="background:#E0F7FA; border-color:#00ACC1; border-style:dashed;"></div> Security & Guardrails</div>
+            <div class="legend-item"><div class="color-box" style="background:#FFF3E0; border-color:#F89B29;"></div> Orchestration</div>
+            <div class="legend-item"><div class="color-box" style="background:#E8F5E9; border-color:#43A047;"></div> AI Agents</div>
+            <div class="legend-item"><div class="color-box" style="background:#F3E5F5; border-color:#8E24AA;"></div> Data & Knowledge</div>
+            <div class="legend-item"><div class="color-box" style="background:#FFEBEE; border-color:#E53935;"></div> External APIs</div>
+        </div>
+    </div>
+
+</body>
+</html>
